@@ -1,0 +1,50 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project state
+
+This repo is at **Milestone 0** (plan + README skeleton only — see `PLAN.md`). There is no `package.json`, no `src/`, and no build tooling yet. Milestone 1 introduces the Vite app; until then, commands below are the intended setup, not something to run.
+
+Once milestone 1 lands:
+
+```bash
+npm install
+npm run dev        # dashboard at localhost:5173
+npm test           # unit tests (Vitest)
+npm run test:e2e   # Playwright
+```
+
+Check milestone checkboxes in `PLAN.md` to see what's actually built before assuming a command exists.
+
+## Working agreement (read this before writing code)
+
+This is Alex's SDET portfolio project — the point is proving *Alex* can build application code, not just test it. That constrains how Claude should help:
+
+- **Nothing gets committed until Alex can explain every line to an interviewer.** Claude may draft, but Alex reviews, modifies, and owns the result.
+- **Core logic and tests (`src/lib/stats.js` and its Vitest suite) get written by Alex first**, then reviewed by Claude — that's the code interviewers will probe on. Don't write this code for Alex; prompt them to write it, then review.
+- Work in milestone-sized increments (`PLAN.md`), each leaving the repo in a working, committable state.
+
+## Architecture
+
+**Data flow is fixture-first by deliberate design, not a shortcut:**
+
+- `src/data/activities.json` — committed fixture, converted once from a real Garmin Connect CSV export. Deterministic data means the test suite can't flake on network conditions, so CI results stay trustworthy.
+- `src/lib/data.js` — the *only* module allowed to read the fixture. Components never import `activities.json` directly. This is the seam where live Garmin sync gets added post-v1 as a second implementation behind the same interface — don't touch Garmin's real API before v1 ships.
+- `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
+
+## Scope discipline (v1)
+
+In scope: load fixture data, summary stats (distance/time/count/streak), one weekly-distance chart (Recharts), one filter (activity type or date range).
+
+Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live Garmin sync, multi-user. Don't add these even if asked to "improve" the project — they're deferred on purpose (see "Known failure modes" in `PLAN.md`).
+
+## Test strategy
+
+- **Unit (Vitest):** all of `stats.js` — totals, weekly bucketing, filter subsets, edge cases (empty data, single activity, missing fields).
+- **E2E (Playwright):** two tiers via tags. `@smoke` (loads, summary renders, chart renders) runs on every push in CI. The full set (filter interactions, empty states) runs on demand — mirrors smoke/regression layering in a production suite.
+- CI (GitHub Actions, added milestone 4 deliberately early) runs unit tests + build + Playwright smoke on every push.
+
+## Stack
+
+React + Vite · Recharts · JavaScript (not TypeScript) · Vitest · Playwright · GitHub Actions · Node v21.

@@ -29,7 +29,20 @@ multi-user.
 2. **Always:** components never import the fixture directly. All data flows
    through `src/lib/data.js`, even while it's three lines long.
 3. **Post-v1:** live Garmin sync becomes a second implementation behind that
-   same interface. We do not touch Garmin's API before v1 ships.
+   same interface.
+4. **Prototype (started 2026-07-21):** exploring the live Garmin API directly
+   via the `Taxuspt/garmin_mcp` MCP server (unofficial, wraps
+   `python-garminconnect`) — for learning the API surface and sourcing real
+   data, run through Claude Code tooling. Not wired into `lib/data.js` or the
+   shipped app; milestone 1 still ships fixture-first unless that changes.
+   - **Maintenance (local machine, not in this repo):** OAuth tokens live at
+     `~/.garminconnect` and last ~6 months — re-run
+     `uvx --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp-auth --force-reauth`
+     when they expire (check by ~2027-01-21). The wrapper itself is unofficial
+     and can silently go stale against Garmin's API — periodically pull the
+     latest with
+     `uvx --refresh --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp`
+     rather than assuming the cached build still works.
 
 ## Stack
 
@@ -75,7 +88,10 @@ Live Garmin sync behind `lib/data.js` · deploy + link · visual regression
 
 ## Known failure modes (watch for these)
 
-1. Fighting Garmin's API before the dashboard exists — banned until post-v1.
+1. Fighting Garmin's API before the dashboard exists — was banned until
+   post-v1; superseded 2026-07-21 by a deliberate decision to prototype live
+   access via MCP (see Data strategy). Still don't wire it into `lib/data.js`
+   or the shipped v1 app without a separate decision.
 2. Building too much and abandoning it — ship milestone 6, then decide.
 3. Using this project to postpone sending applications — it supports
    applications, it doesn't replace them.
