@@ -8,6 +8,7 @@ test-results/
 logs
 *.log
 
-# real Garmin data snapshot — holding out of the public repo until
-# we're sure the genericized fixture is safe to publish (see PLAN.md)
-src/data/activities.json
+# real Garmin data snapshot (100 activities, MCP pull) — local-only,
+# optional richer dataset for local dev. src/data/activities.json (the
+# tracked path lib/data.js reads) is a small synthetic sample instead.
+src/data/activities.local.json

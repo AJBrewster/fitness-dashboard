@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1000001,
+    "name": "Walk",
+    "type": "walking",
+    "startTime": "2026-06-01T07:15:00",
+    "distanceMeters": 3200,
+    "durationSeconds": 2100,
+    "calories": 210,
+    "avgHrBpm": 102
+  },
+  {
+    "id": 1000002,
+    "name": "Run - Easy",
+    "type": "running",
+    "startTime": "2026-06-02T06:30:00",
+    "distanceMeters": 5000,
+    "durationSeconds": 1800,
+    "calories": 340,
+    "avgHrBpm": 141
+  },
+  {
+    "id": 1000003,
+    "name": "Strength Training",
+    "type": "strength_training",
+    "startTime": "2026-06-03T18:00:00",
+    "distanceMeters": 0,
+    "durationSeconds": 2700,
+    "calories": 260,
+    "avgHrBpm": null
+  },
+  {
+    "id": 1000004,
+    "name": "Run - Tempo",
+    "type": "running",
+    "startTime": "2026-06-08T06:45:00",
+    "distanceMeters": 8000,
+    "durationSeconds": 2400,
+    "calories": 520,
+    "avgHrBpm": 158
+  },
+  {
+    "id": 1000005,
+    "name": "Ride",
+    "type": "virtual_ride",
+    "startTime": "2026-06-09T19:00:00",
+    "distanceMeters": 20000,
+    "durationSeconds": 3000,
+    "calories": 480,
+    "avgHrBpm": 132
+  },
+  {
+    "id": 1000006,
+    "name": "Ultimate Disc",
+    "type": "ultimate_disc",
+    "startTime": "2026-06-10T18:30:00",
+    "distanceMeters": 2400,
+    "durationSeconds": 3600,
+    "calories": 610,
+    "avgHrBpm": 137
+  },
+  {
+    "id": 1000007,
+    "name": "Walk",
+    "type": "walking",
+    "startTime": "2026-06-15T07:00:00",
+    "distanceMeters": 4100,
+    "durationSeconds": 2700,
+    "calories": 250,
+    "avgHrBpm": 98
+  },
+  {
+    "id": 1000008,
+    "name": "Run - Speed Repeats",
+    "type": "running",
+    "startTime": "2026-06-16T06:15:00",
+    "distanceMeters": 6500,
+    "durationSeconds": 1900,
+    "calories": 430,
+    "avgHrBpm": 165
+  },
+  {
+    "id": 1000009,
+    "name": "Treadmill Run",
+    "type": "treadmill_running",
+    "startTime": "2026-06-17T17:30:00",
+    "distanceMeters": 4800,
+    "durationSeconds": 1700,
+    "calories": 310,
+    "avgHrBpm": 148
+  },
+  {
+    "id": 1000010,
+    "name": "Strength Training",
+    "type": "strength_training",
+    "startTime": "2026-06-22T18:00:00",
+    "distanceMeters": 0,
+    "durationSeconds": 2400,
+    "calories": 230,
+    "avgHrBpm": null
+  },
+  {
+    "id": 1000011,
+    "name": "Run - Base",
+    "type": "running",
+    "startTime": "2026-06-23T06:30:00",
+    "distanceMeters": 10000,
+    "durationSeconds": 3300,
+    "calories": 640,
+    "avgHrBpm": 145
+  },
+  {
+    "id": 1000012,
+    "name": "Paddleboarding",
+    "type": "stand_up_paddleboarding_v2",
+    "startTime": "2026-06-27T10:00:00",
+    "distanceMeters": 3000,
+    "durationSeconds": 3600,
+    "calories": 300,
+    "avgHrBpm": 110
+  },
+  {
+    "id": 1000013,
+    "name": "Run - Tired",
+    "type": "running",
+    "startTime": "2026-06-29T06:45:00",
+    "distanceMeters": 4000,
+    "durationSeconds": 1500,
+    "calories": 270,
+    "avgHrBpm": 152
+  },
+  {
+    "id": 1000014,
+    "name": "Ultimate Disc",
+    "type": "ultimate_disc",
+    "startTime": "2026-06-30T18:30:00",
+    "distanceMeters": 2600,
+    "durationSeconds": 3700,
+    "calories": 630,
+    "avgHrBpm": 140
+  }
+]

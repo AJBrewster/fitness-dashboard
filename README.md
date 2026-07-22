@@ -13,13 +13,19 @@ and filtering — built as a testing-first portfolio project.
 
 ## Why fixture data instead of the Garmin API
 
-The app reads from a committed `activities.json` fixture, converted once from a
-Garmin Connect export, rather than calling Garmin's (partner-gated) API. This
-is a deliberate design choice, not a shortcut: deterministic data means the
-test suite can't flake on network conditions or account state, so CI results
-are trustworthy. All data access goes through a single interface
-(`src/lib/data.js`), so live sync can be added later as a second
-implementation without touching the components or the tests.
+The app reads from a committed `src/data/activities.json` fixture rather than
+calling Garmin's (partner-gated) API. This is a deliberate design choice, not
+a shortcut: deterministic data means the test suite can't flake on network
+conditions or account state, so CI results are trustworthy. All data access
+goes through a single interface (`src/lib/data.js`), so live sync can be
+added later as a second implementation without touching the components or
+the tests.
+
+The committed fixture is a small set of synthetic activities, not real
+Garmin data — kept that way so the repo is safe to publish and runs
+identically for anyone who clones it. (A real, one-time Garmin data snapshot
+exists locally for development but is gitignored and never shipped — see
+`PLAN.md`'s Data strategy if you're curious about the full reasoning.)
 
 ## Testing approach
 
@@ -40,10 +46,9 @@ implementation without touching the components or the tests.
 npm install
 npm run dev        # dashboard at localhost:5173
 npm test           # unit tests (Vitest)
-npm run test:e2e   # Playwright
 ```
 
-*(Commands land with milestone 1 — until then this section is aspirational.)*
+*(`npm run test:e2e` lands with Playwright in milestone 6 — not wired up yet.)*
 
 ## Stack
 

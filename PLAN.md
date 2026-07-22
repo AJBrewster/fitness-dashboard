@@ -10,6 +10,13 @@ Built pairing with Claude Code, with one hard rule: **nothing gets committed
 until Alex can explain every line to an interviewer.** Claude may draft;
 Alex reviews, modifies, and owns the result.
 
+**Docs stay in sync with reality, every milestone.** Before each commit,
+update PLAN.md (checkbox + any scope/gap notes), CLAUDE.md (project state,
+architecture), and README.md (status, commands, anything milestone-gated)
+to match what's actually true — not after the fact, not batched up. Stale
+docs are worse than no docs, since they actively mislead whoever reads them
+next (including Claude, next session).
+
 *(Updated 2026-07-22: dropped the earlier "Alex writes `lib/stats.js` and its
 tests first" rule — Claude drafts that file too now. The "explain every line"
 bar still applies to it same as anything else; walk through `stats.js` before
@@ -28,19 +35,30 @@ multi-user.
 
 ## Data strategy
 
-1. **Now:** committed `src/data/activities.json` fixture — 100 real activities,
-   one-time snapshot pulled 2026-07-22 via the `garmin` MCP server (see
-   prototype note below) rather than a CSV export as originally planned. Same
-   effect either way: a static, deterministic file checked into the repo, so
-   CI can't flake on network conditions or account state.
-   - **Privacy pass before committing:** `owner_display_name` dropped from
-     every record. Activity `name` fields are genericized — real place names
-     (home area, regular routes) stripped since this repo is public; only a
-     small allow-list of known workout-descriptor words (e.g. "Tempo",
-     "Easy", "Speed Repeats") is kept, so anything not on that list is
-     discarded by default rather than requiring an ever-growing place
-     denylist. Zwift ride names are left as-is (virtual routes/events, not
-     real-world locations).
+1. **Now — two files, one path committed:**
+   - `src/data/activities.json` — the path `lib/data.js` actually reads, and
+     the only one committed. 14 hand-written synthetic activities, enough
+     variety (all 7 activity types, some `null` HR/calories) to exercise the
+     app and tests without depending on real data.
+   - `src/data/activities.local.json` — **gitignored, not committed.** A
+     one-time snapshot of 100 real activities pulled 2026-07-22 via the
+     `garmin` MCP server (see prototype note below), for optional richer
+     local dev/testing. Kept at a different path than the tracked fixture on
+     purpose: since `.gitignore` only blocks *untracked* files, committing
+     real data at the same path `lib/data.js` reads would risk a later swap
+     silently becoming a tracked change. Swap it in locally by pointing
+     `lib/data.js` at it temporarily if you want to eyeball real numbers —
+     don't commit that change.
+   - **Privacy pass applied to the real snapshot before it ever touched
+     git:** `owner_display_name` dropped from every record. Activity `name`
+     fields genericized — real place names (home area, regular routes)
+     stripped since this repo is public; only a small allow-list of known
+     workout-descriptor words (e.g. "Tempo", "Easy", "Speed Repeats") is
+     kept, so anything not on that list is discarded by default rather than
+     requiring an ever-growing place denylist. Zwift ride names left as-is
+     (virtual routes/events, not real-world locations).
+   - Either way, both files are static/deterministic — no network call at
+     app runtime, no CI flake risk.
 2. **Always:** components never import the fixture directly. All data flows
    through `src/lib/data.js`, even while it's three lines long.
 3. **Post-v1:** live Garmin sync becomes a second implementation behind that
@@ -49,10 +67,11 @@ multi-user.
    via the `Taxuspt/garmin_mcp` MCP server (unofficial, wraps
    `python-garminconnect`) — for learning the API surface and sourcing real
    data, run through Claude Code tooling. As of 2026-07-22 this MCP connection
-   is also how the milestone-1 fixture snapshot above was sourced (a one-time
-   export, not a live wire-up). `lib/data.js` still only reads the static
-   fixture — no live/network call happens at app runtime. Don't wire live
-   Garmin calls into the shipped app without a separate decision.
+   is also how `activities.local.json` above was sourced (a one-time export,
+   not a live wire-up, and not the file the app actually ships with).
+   `lib/data.js` still only reads the static, committed fixture — no
+   live/network call happens at app runtime. Don't wire live Garmin calls
+   into the shipped app without a separate decision.
    - **Maintenance (local machine, not in this repo):** OAuth tokens live at
      `~/.garminconnect` and last ~6 months — re-run
      `uvx --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp-auth --force-reauth`
