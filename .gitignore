@@ -5,3 +5,9 @@ playwright-report/
 test-results/
 .DS_Store
 *.local
+logs
+*.log
+
+# real Garmin data snapshot — holding out of the public repo until
+# we're sure the genericized fixture is safe to publish (see PLAN.md)
+src/data/activities.json

@@ -4,16 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 0** (plan + README skeleton only — see `PLAN.md`). There is no `package.json`, no `src/`, and no build tooling yet. Milestone 1 introduces the Vite app; until then, commands below are the intended setup, not something to run.
-
-Once milestone 1 lands:
+This repo is at **Milestone 1** (Vite + React app scaffolded, `activities.json` fixture committed, data loads through `src/lib/data.js` — see `PLAN.md`). `stats.js` and its Vitest suite (Milestone 2) don't exist yet.
 
 ```bash
 npm install
 npm run dev        # dashboard at localhost:5173
-npm test           # unit tests (Vitest)
-npm run test:e2e   # Playwright
+npm run build       # production build
 ```
+
+`npm test` (Vitest) and `npm run test:e2e` (Playwright) aren't wired up yet — the packages are installed ahead of schedule, but no test files or scripts exist until Milestones 2 and 6.
 
 Check milestone checkboxes in `PLAN.md` to see what's actually built before assuming a command exists.
 
@@ -29,7 +28,7 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 
 **Data flow is fixture-first by deliberate design, not a shortcut:**
 
-- `src/data/activities.json` — committed fixture, converted once from a real Garmin Connect CSV export. Deterministic data means the test suite can't flake on network conditions, so CI results stay trustworthy.
+- `src/data/activities.json` — committed fixture, a one-time snapshot of 100 real activities pulled via the `garmin` MCP server (not a CSV export, but same effect: a static file, not a live call). Deterministic data means the test suite can't flake on network conditions, so CI results stay trustworthy. Activity names are genericized (real place names stripped, `owner_display_name` dropped) since this repo is public — see `PLAN.md`'s Data strategy for the exact rule.
 - `src/lib/data.js` — the *only* module allowed to read the fixture. Components never import `activities.json` directly. This is the seam where live Garmin sync gets added post-v1 as a second implementation behind the same interface — don't touch Garmin's real API before v1 ships.
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
 

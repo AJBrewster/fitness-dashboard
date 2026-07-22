@@ -24,8 +24,19 @@ multi-user.
 
 ## Data strategy
 
-1. **Now:** committed `src/data/activities.json` fixture, converted once from a
-   Garmin Connect CSV export. Deterministic data → deterministic tests in CI.
+1. **Now:** committed `src/data/activities.json` fixture — 100 real activities,
+   one-time snapshot pulled 2026-07-22 via the `garmin` MCP server (see
+   prototype note below) rather than a CSV export as originally planned. Same
+   effect either way: a static, deterministic file checked into the repo, so
+   CI can't flake on network conditions or account state.
+   - **Privacy pass before committing:** `owner_display_name` dropped from
+     every record. Activity `name` fields are genericized — real place names
+     (home area, regular routes) stripped since this repo is public; only a
+     small allow-list of known workout-descriptor words (e.g. "Tempo",
+     "Easy", "Speed Repeats") is kept, so anything not on that list is
+     discarded by default rather than requiring an ever-growing place
+     denylist. Zwift ride names are left as-is (virtual routes/events, not
+     real-world locations).
 2. **Always:** components never import the fixture directly. All data flows
    through `src/lib/data.js`, even while it's three lines long.
 3. **Post-v1:** live Garmin sync becomes a second implementation behind that
@@ -33,8 +44,11 @@ multi-user.
 4. **Prototype (started 2026-07-21):** exploring the live Garmin API directly
    via the `Taxuspt/garmin_mcp` MCP server (unofficial, wraps
    `python-garminconnect`) — for learning the API surface and sourcing real
-   data, run through Claude Code tooling. Not wired into `lib/data.js` or the
-   shipped app; milestone 1 still ships fixture-first unless that changes.
+   data, run through Claude Code tooling. As of 2026-07-22 this MCP connection
+   is also how the milestone-1 fixture snapshot above was sourced (a one-time
+   export, not a live wire-up). `lib/data.js` still only reads the static
+   fixture — no live/network call happens at app runtime. Don't wire live
+   Garmin calls into the shipped app without a separate decision.
    - **Maintenance (local machine, not in this repo):** OAuth tokens live at
      `~/.garminconnect` and last ~6 months — re-run
      `uvx --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp-auth --force-reauth`
@@ -43,6 +57,11 @@ multi-user.
      latest with
      `uvx --refresh --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp`
      rather than assuming the cached build still works.
+5. **Long-term (post-v1, tracked, not decided):** a flat JSON fixture won't
+   scale past v1 if this becomes a real ongoing tool — a DB (even SQLite)
+   is the likely next step once live sync is in play. Out of scope for v1;
+   revisit alongside the "Post-v1" live-sync item above rather than as its
+   own separate effort.
 
 ## Stack
 
@@ -54,7 +73,7 @@ GitHub Actions. Node v21 locally.
 Each leaves the repo working and committable. Sessions are ~1–2 hours.
 
 - [x] **0. Repo setup** — git init, plan, README skeleton, pushed public
-- [ ] **1. Vite app + fixture** — blank app runs, `activities.json` committed, data loads via `lib/data.js`
+- [x] **1. Vite app + fixture** — blank app runs, `activities.json` committed, data loads via `lib/data.js`
 - [ ] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields)
 - [ ] **3. Summary component** — real numbers on screen
 - [ ] **4. GitHub Actions CI** — unit tests + build on every push, green badge on README *(early on purpose)*
