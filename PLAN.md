@@ -8,9 +8,13 @@ finished beats milestone 12 half-done.
 
 Built pairing with Claude Code, with one hard rule: **nothing gets committed
 until Alex can explain every line to an interviewer.** Claude may draft;
-Alex reviews, modifies, and owns the result. Core logic (`lib/stats.js`) and
-tests get written by Alex first, then reviewed — that's the code interviews
-probe.
+Alex reviews, modifies, and owns the result.
+
+*(Updated 2026-07-22: dropped the earlier "Alex writes `lib/stats.js` and its
+tests first" rule — Claude drafts that file too now. The "explain every line"
+bar still applies to it same as anything else; walk through `stats.js` before
+it ships if it's been a while since it was written, since that's still the
+file most likely to get probed in an interview.)*
 
 ## Scope (v1)
 
@@ -68,13 +72,21 @@ multi-user.
 React + Vite · Recharts · JavaScript · Vitest (unit) · Playwright (e2e) ·
 GitHub Actions. Node v21 locally.
 
+**Version gotcha (found milestone 2):** the local Node is v21.6.1, which
+predates `node:util`'s `styleText` export. `vitest@4` (and latest
+`create-vite`) depend on it via `rolldown` and fail at startup with
+`SyntaxError: ... does not provide an export named 'styleText'`. Pinned
+`vitest` to `^2.1.9` (matches Vite 5) to work around it. Watch for the same
+issue when Playwright gets added in milestone 6 — check its Node requirement
+before installing, or upgrade Node first.
+
 ## Milestones
 
 Each leaves the repo working and committable. Sessions are ~1–2 hours.
 
 - [x] **0. Repo setup** — git init, plan, README skeleton, pushed public
 - [x] **1. Vite app + fixture** — blank app runs, `activities.json` committed, data loads via `lib/data.js`
-- [ ] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields)
+- [x] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields). **Note:** `getTotals` covers distance/duration/count only — `streak` (also called for in the v1 Scope section above) isn't implemented yet; needs its own pass.
 - [ ] **3. Summary component** — real numbers on screen
 - [ ] **4. GitHub Actions CI** — unit tests + build on every push, green badge on README *(early on purpose)*
 - [ ] **5. Chart** — weekly distance renders

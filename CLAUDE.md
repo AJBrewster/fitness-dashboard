@@ -20,8 +20,7 @@ Check milestone checkboxes in `PLAN.md` to see what's actually built before assu
 
 This is Alex's SDET portfolio project — the point is proving *Alex* can build application code, not just test it. That constrains how Claude should help:
 
-- **Nothing gets committed until Alex can explain every line to an interviewer.** Claude may draft, but Alex reviews, modifies, and owns the result.
-- **Core logic and tests (`src/lib/stats.js` and its Vitest suite) get written by Alex first**, then reviewed by Claude — that's the code interviewers will probe on. Don't write this code for Alex; prompt them to write it, then review.
+- **Nothing gets committed until Alex can explain every line to an interviewer.** Claude may draft, but Alex reviews, modifies, and owns the result. This now includes `src/lib/stats.js` and its Vitest suite (updated 2026-07-22 — Claude used to be barred from drafting this file specifically, since it's the code interviewers are most likely to probe; that restriction is dropped, but the "explain every line" bar still applies to it).
 - Work in milestone-sized increments (`PLAN.md`), each leaving the repo in a working, committable state.
 
 ## Architecture
