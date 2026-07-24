@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 4** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers, GitHub Actions CI running unit tests + build on push — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No chart yet (Milestone 5), no Playwright yet (Milestone 6, not in CI yet either).
+This repo is at **Milestone 5** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers, GitHub Actions CI running unit tests + build on push, `WeeklyDistanceChart` rendering weekly distance via Recharts — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No filters wired into the UI yet (Milestone 7) and no Playwright yet (Milestone 6, not in CI yet either).
 
 ```bash
 npm install
@@ -34,6 +34,7 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - `src/lib/data.js` — the *only* module allowed to read the fixture. Components never import `activities.json` directly. This is the seam where live Garmin sync gets added post-v1 as a second implementation behind the same interface — don't touch Garmin's real API before v1 ships.
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
 - `src/components/Summary.jsx` — presentational only: takes a `totals` prop (the object `getTotals()` returns) and formats/renders it. Doesn't call `getActivities`/`getTotals` itself — `App.jsx` computes `totals` and passes it down, keeping the component testable with fake props later without needing the fixture.
+- `src/components/WeeklyDistanceChart.jsx` — same pattern: presentational, takes a `weeklyDistance` prop (the array `getWeeklyDistance()` returns), converts meters to km for display, renders a Recharts `LineChart`. `App.jsx` computes and passes it down, same as `Summary`.
 
 ## Scope discipline (v1)
 
@@ -45,6 +46,7 @@ Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live
 
 - **Unit (Vitest):** all of `stats.js` — totals, weekly bucketing, filter subsets, edge cases (empty data, single activity, missing fields).
 - **E2E (Playwright):** two tiers via tags. `@smoke` (loads, summary renders, chart renders) runs on every push in CI. The full set (filter interactions, empty states) runs on demand — mirrors smoke/regression layering in a production suite. Not implemented yet (Milestone 6).
+  - **Gotcha found while building the chart (Milestone 5):** Recharts animates the line being drawn in on mount (~1.5s default). A screenshot/assertion taken too early sees only a partial path — looks exactly like a rendering bug (points 2+ appear disconnected) but isn't. When milestone 6 writes the `@smoke` assertion for "chart renders," wait for a stable signal (e.g. `recharts-line-dots circle` count, or disable animation via `isAnimationActive={false}` on `<Line>` for tests) rather than a fixed short timeout.
 - **CI (GitHub Actions, `.github/workflows/ci.yml`, added milestone 4 deliberately early):** currently `npm ci` + `npm test` + `npm run build` on push/PR to `main`, using Node 20 in the runner (not the local Node v21.6.1 — sidesteps the `styleText`/`rolldown` gotcha below entirely, though `vitest` is pinned regardless). Playwright smoke joins this pipeline in Milestone 6.
 
 ## Stack
