@@ -106,7 +106,7 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
 - [x] **0. Repo setup** — git init, plan, README skeleton, pushed public
 - [x] **1. Vite app + fixture** — blank app runs, `activities.json` committed, data loads via `lib/data.js`
 - [x] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields). **Note:** `getTotals` covers distance/duration/count only — `streak` (also called for in the v1 Scope section above) isn't implemented yet; needs its own pass.
-- [ ] **3. Summary component** — real numbers on screen
+- [x] **3. Summary component** — real numbers on screen. **Note:** shows distance/time/activity count only — no `streak` yet (still not implemented in `stats.js`, see milestone 2 note above)
 - [ ] **4. GitHub Actions CI** — unit tests + build on every push, green badge on README *(early on purpose)*
 - [ ] **5. Chart** — weekly distance renders
 - [ ] **6. Playwright smoke tests** — `@smoke`-tagged e2e passing in CI ← **minimum viable portfolio piece**

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 2** (Vite + React app scaffolded, `activities.json` fixture committed, data loads through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing — see `PLAN.md`). No Summary component yet (Milestone 3); `getTotals` doesn't include `streak` yet even though it's in the v1 Scope — flagged as a gap in `PLAN.md`, not silently done.
+This repo is at **Milestone 3** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No chart yet (Milestone 5) and no CI yet (Milestone 4).
 
 ```bash
 npm install
@@ -33,6 +33,7 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - `src/data/activities.local.json` — **gitignored, not committed.** A one-time snapshot of 100 real activities pulled via the `garmin` MCP server, kept at a different filename on purpose so a local swap can't accidentally get committed as a change to the tracked fixture path. Optional richer dataset for local dev only — don't point `lib/data.js` at it in a commit. See `PLAN.md`'s Data strategy for the full reasoning and the name-genericization rule applied to it.
 - `src/lib/data.js` — the *only* module allowed to read the fixture. Components never import `activities.json` directly. This is the seam where live Garmin sync gets added post-v1 as a second implementation behind the same interface — don't touch Garmin's real API before v1 ships.
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
+- `src/components/Summary.jsx` — presentational only: takes a `totals` prop (the object `getTotals()` returns) and formats/renders it. Doesn't call `getActivities`/`getTotals` itself — `App.jsx` computes `totals` and passes it down, keeping the component testable with fake props later without needing the fixture.
 
 ## Scope discipline (v1)
 
