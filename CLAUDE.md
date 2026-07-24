@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 5** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers, GitHub Actions CI running unit tests + build on push, `WeeklyDistanceChart` rendering weekly distance via Recharts — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No filters wired into the UI yet (Milestone 7) and no Playwright yet (Milestone 6, not in CI yet either).
+This repo is at **Milestone 6** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` + `WeeklyDistanceChart` rendering real numbers, GitHub Actions CI running unit tests + build + Playwright smoke on push — see `PLAN.md`). This is the "minimum viable portfolio piece" milestone per `PLAN.md`. `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No filters wired into the UI yet (Milestone 7).
 
 ```bash
 npm install
-npm run dev        # dashboard at localhost:5173
-npm run build       # production build
-npm test            # unit tests (Vitest)
+npm run dev             # dashboard at localhost:5173
+npm run build            # production build
+npm test                 # unit tests (Vitest)
+npm run test:e2e         # full Playwright suite
+npm run test:e2e:smoke   # just the @smoke-tagged tests (what CI runs)
 ```
-
-`npm run test:e2e` (Playwright) isn't wired up yet — that lands in Milestone 6.
 
 Check milestone checkboxes in `PLAN.md` to see what's actually built before assuming a command exists.
 
@@ -35,6 +35,8 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
 - `src/components/Summary.jsx` — presentational only: takes a `totals` prop (the object `getTotals()` returns) and formats/renders it. Doesn't call `getActivities`/`getTotals` itself — `App.jsx` computes `totals` and passes it down, keeping the component testable with fake props later without needing the fixture.
 - `src/components/WeeklyDistanceChart.jsx` — same pattern: presentational, takes a `weeklyDistance` prop (the array `getWeeklyDistance()` returns), converts meters to km for display, renders a Recharts `LineChart`. `App.jsx` computes and passes it down, same as `Summary`.
+- `e2e/smoke.spec.js` — Playwright, tagged `@smoke` via the `{ tag: '@smoke' }` test option. Asserts against the exact values the committed synthetic fixture produces (e.g. "73.6 km", 5 weekly chart dots) — coupled to `activities.json` on purpose, consistent with the project's fixture-first/deterministic-testing design. If the fixture changes, these assertions need updating too.
+- `vite.config.js`'s `test.exclude` includes `e2e/**` — without it, Vitest's default glob picks up Playwright's `.spec.js` files and fails trying to run them with the wrong `test()`/`expect()` API. Found the hard way; keep this if either test file naming convention changes.
 
 ## Scope discipline (v1)
 
@@ -45,12 +47,12 @@ Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live
 ## Test strategy
 
 - **Unit (Vitest):** all of `stats.js` — totals, weekly bucketing, filter subsets, edge cases (empty data, single activity, missing fields).
-- **E2E (Playwright):** two tiers via tags. `@smoke` (loads, summary renders, chart renders) runs on every push in CI. The full set (filter interactions, empty states) runs on demand — mirrors smoke/regression layering in a production suite. Not implemented yet (Milestone 6).
-  - **Gotcha found while building the chart (Milestone 5):** Recharts animates the line being drawn in on mount (~1.5s default). A screenshot/assertion taken too early sees only a partial path — looks exactly like a rendering bug (points 2+ appear disconnected) but isn't. When milestone 6 writes the `@smoke` assertion for "chart renders," wait for a stable signal (e.g. `recharts-line-dots circle` count, or disable animation via `isAnimationActive={false}` on `<Line>` for tests) rather than a fixed short timeout.
-- **CI (GitHub Actions, `.github/workflows/ci.yml`, added milestone 4 deliberately early):** currently `npm ci` + `npm test` + `npm run build` on push/PR to `main`, using Node 20 in the runner (not the local Node v21.6.1 — sidesteps the `styleText`/`rolldown` gotcha below entirely, though `vitest` is pinned regardless). Playwright smoke joins this pipeline in Milestone 6.
+- **E2E (Playwright):** two tiers via tags, only the first exists yet. `@smoke` (`e2e/smoke.spec.js`: loads, summary renders, chart renders — 3 tests) runs on every push in CI. The full set (filter interactions, empty states) is still just planned, lands with Milestone 7's filters.
+  - **Gotcha found while building the chart (Milestone 5), applied in the smoke test:** Recharts animates the line being drawn in on mount (~1.5s default). A screenshot/assertion taken too early sees only a partial path — looks exactly like a rendering bug (points 2+ appear disconnected) but isn't. The "chart renders" smoke test asserts `.recharts-line-dots circle` count instead of the line path, since dots are placed at final position immediately rather than animating in.
+- **CI (GitHub Actions, `.github/workflows/ci.yml`, added milestone 4 deliberately early):** `npm ci` → `npm test` → `npm run build` → install Playwright's chromium → `npm run test:e2e:smoke` → upload the HTML report as an artifact (`if: always()`, so it uploads even on failure), on push/PR to `main`. Runs on Node 20 in the runner (not the local Node v21.6.1 — sidesteps the `styleText`/`rolldown` gotcha below entirely, though `vitest` is pinned regardless). Confirmed actually green on GitHub via `gh run list`, not just locally.
 
 ## Stack
 
 React + Vite · Recharts · JavaScript (not TypeScript) · Vitest · Playwright · GitHub Actions · Node v21.
 
-**Gotcha:** the local Node (v21.6.1) predates `node:util`'s `styleText` export, which `vitest@4`/latest `create-vite` depend on via `rolldown` — both fail at startup on this machine. `vitest` is pinned to `^2.1.9`. Check Playwright's Node requirement before installing it in Milestone 6.
+**Gotcha:** the local Node (v21.6.1) predates `node:util`'s `styleText` export, which `vitest@4`/latest `create-vite` depend on via `rolldown` — both fail at startup on this machine. `vitest` is pinned to `^2.1.9`. (`@playwright/test` had no such issue — `engines` just needs Node `>=18`.)

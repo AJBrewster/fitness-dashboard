@@ -35,20 +35,21 @@ exists locally for development but is gitignored and never shipped — see
   (loads, summary renders, chart renders) runs on every push; the full set
   (filter interactions, empty states) runs on demand. Same smoke/regression
   layering used in production test suites.
-- **CI (GitHub Actions)** currently runs unit tests and the build on every
-  push (`.github/workflows/ci.yml`). Playwright smoke tests join the
-  pipeline in milestone 6, along with uploading the HTML report as an
-  artifact — not there yet.
+- **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
+  `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
+  HTML report as an artifact. The full Playwright suite (filter
+  interactions, empty states) still runs on demand only — lands with
+  milestone 7's filters.
 
 ## Running locally
 
 ```bash
 npm install
-npm run dev        # dashboard at localhost:5173
-npm test           # unit tests (Vitest)
+npm run dev             # dashboard at localhost:5173
+npm test                # unit tests (Vitest)
+npm run test:e2e:smoke  # Playwright @smoke tests (what CI runs)
+npm run test:e2e        # full Playwright suite
 ```
-
-*(`npm run test:e2e` lands with Playwright in milestone 6 — not wired up yet.)*
 
 ## Stack
 

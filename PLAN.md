@@ -109,7 +109,7 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
 - [x] **3. Summary component** — real numbers on screen. **Note:** shows distance/time/activity count only — no `streak` yet (still not implemented in `stats.js`, see milestone 2 note above)
 - [x] **4. GitHub Actions CI** — `.github/workflows/ci.yml` runs `npm ci`, `npm test`, `npm run build` on push/PR to `main`; badge added to README. **Note:** badge won't show green until this gets pushed and the workflow actually runs on GitHub — it'll read "no status"/unknown locally.
 - [x] **5. Chart** — `WeeklyDistanceChart` (Recharts line chart) renders weekly distance from `getWeeklyDistance`; verified in a real headless-browser run (screenshot + zero console errors), not just a successful build
-- [ ] **6. Playwright smoke tests** — `@smoke`-tagged e2e passing in CI ← **minimum viable portfolio piece**
+- [x] **6. Playwright smoke tests** — `@smoke`-tagged e2e (`e2e/smoke.spec.js`: loads, summary renders, chart renders) passing locally and wired into CI with an HTML report artifact ← **minimum viable portfolio piece**
 - [ ] **7. Filters + tests** — filtering updates summary and chart, covered at both levels
 - [ ] **8. README polish** — screenshot, testing rationale, linkable in applications
 
@@ -128,12 +128,19 @@ Live Garmin sync behind `lib/data.js` · deploy + link · visual regression
 
 ## Definition of done (v1)
 
-- [ ] Public GitHub repo
-- [ ] Dashboard renders real Garmin data
-- [ ] Unit tests on data logic
-- [ ] Playwright e2e, smoke-tagged
-- [ ] CI running on push, badge green
-- [ ] README with screenshot + testing rationale
+- [x] Public GitHub repo — confirmed public via `gh repo view`
+- [ ] Dashboard renders real Garmin data — **open tension, not yet resolved:** the
+      committed fixture is synthetic (see Data strategy); the real Garmin
+      pull is deliberately local-only/gitignored for privacy. Decide before
+      calling v1 done: is "real Garmin data" satisfied by the local-only
+      snapshot existing, or does this item require the public app itself to
+      show real (if genericized) data?
+- [x] Unit tests on data logic — 15 Vitest tests, `stats.js`
+- [x] Playwright e2e, smoke-tagged — `e2e/smoke.spec.js`, 3 tests
+- [x] CI running on push, badge green — confirmed via `gh run list`, last two
+      pushes both succeeded
+- [ ] README with screenshot + testing rationale — rationale done, screenshot
+      still pending (Milestone 8)
 - [ ] Link on LinkedIn profile
 
 ## Known failure modes (watch for these)
