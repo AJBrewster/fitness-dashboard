@@ -1,8 +1,6 @@
 # Fitness Dashboard
 
-<!-- TODO milestone 4: CI badge goes here once .github/workflows/ci.yml exists:
 [![CI](https://github.com/AJBrewster/fitness-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/AJBrewster/fitness-dashboard/actions/workflows/ci.yml)
--->
 
 A dashboard for Garmin activity data — summary stats, weekly distance trends,
 and filtering — built as a testing-first portfolio project.
@@ -37,8 +35,10 @@ exists locally for development but is gitignored and never shipped — see
   (loads, summary renders, chart renders) runs on every push; the full set
   (filter interactions, empty states) runs on demand. Same smoke/regression
   layering used in production test suites.
-- **CI (GitHub Actions)** runs unit tests, the build, and the Playwright smoke
-  set on every push, and uploads the Playwright HTML report as an artifact.
+- **CI (GitHub Actions)** currently runs unit tests and the build on every
+  push (`.github/workflows/ci.yml`). Playwright smoke tests join the
+  pipeline in milestone 6, along with uploading the HTML report as an
+  artifact — not there yet.
 
 ## Running locally
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 3** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No chart yet (Milestone 5) and no CI yet (Milestone 4).
+This repo is at **Milestone 4** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` component rendering real distance/time/activity-count numbers, GitHub Actions CI running unit tests + build on push — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No chart yet (Milestone 5), no Playwright yet (Milestone 6, not in CI yet either).
 
 ```bash
 npm install
@@ -44,8 +44,8 @@ Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live
 ## Test strategy
 
 - **Unit (Vitest):** all of `stats.js` — totals, weekly bucketing, filter subsets, edge cases (empty data, single activity, missing fields).
-- **E2E (Playwright):** two tiers via tags. `@smoke` (loads, summary renders, chart renders) runs on every push in CI. The full set (filter interactions, empty states) runs on demand — mirrors smoke/regression layering in a production suite.
-- CI (GitHub Actions, added milestone 4 deliberately early) runs unit tests + build + Playwright smoke on every push.
+- **E2E (Playwright):** two tiers via tags. `@smoke` (loads, summary renders, chart renders) runs on every push in CI. The full set (filter interactions, empty states) runs on demand — mirrors smoke/regression layering in a production suite. Not implemented yet (Milestone 6).
+- **CI (GitHub Actions, `.github/workflows/ci.yml`, added milestone 4 deliberately early):** currently `npm ci` + `npm test` + `npm run build` on push/PR to `main`, using Node 20 in the runner (not the local Node v21.6.1 — sidesteps the `styleText`/`rolldown` gotcha below entirely, though `vitest` is pinned regardless). Playwright smoke joins this pipeline in Milestone 6.
 
 ## Stack
 
