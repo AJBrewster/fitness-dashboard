@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 6** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` + `WeeklyDistanceChart` rendering real numbers, GitHub Actions CI running unit tests + build + Playwright smoke on push — see `PLAN.md`). This is the "minimum viable portfolio piece" milestone per `PLAN.md`. `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. No filters wired into the UI yet (Milestone 7).
+This repo is at **Milestone 7** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` + `WeeklyDistanceChart` rendering real numbers, GitHub Actions CI running unit tests + build + Playwright smoke on push, `DateRangeFilter` wired into `App.jsx` and updating both the summary and chart — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. Only Milestone 8 (README polish/screenshot) remains for v1.
 
 ```bash
 npm install
@@ -35,7 +35,10 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
 - `src/components/Summary.jsx` — presentational only: takes a `totals` prop (the object `getTotals()` returns) and formats/renders it. Doesn't call `getActivities`/`getTotals` itself — `App.jsx` computes `totals` and passes it down, keeping the component testable with fake props later without needing the fixture.
 - `src/components/WeeklyDistanceChart.jsx` — same pattern: presentational, takes a `weeklyDistance` prop (the array `getWeeklyDistance()` returns), converts meters to km for display, renders a Recharts `LineChart`. `App.jsx` computes and passes it down, same as `Summary`.
+- `src/components/DateRangeFilter.jsx` — same pattern again: presentational, controlled by `start`/`end` state owned in `App.jsx` (`useState`, both `''` by default = unfiltered). `App.jsx` calls `filterByDateRange(activities, start, end)` before computing `totals`/`weeklyDistance`, so filtering flows through the same `stats.js` functions rather than duplicating logic in the component.
+  - **Gotcha:** `<input type="date">` gives a bare `'YYYY-MM-DD'`, which `Date` parses as midnight. `App.jsx` appends `T23:59:59` to the "To" value before calling `filterByDateRange` so that day's activities aren't excluded — `filterByDateRange` itself is unchanged (its own tests already expected callers to pass an explicit end-of-day time for an inclusive boundary).
 - `e2e/smoke.spec.js` — Playwright, tagged `@smoke` via the `{ tag: '@smoke' }` test option. Asserts against the exact values the committed synthetic fixture produces (e.g. "73.6 km", 5 weekly chart dots) — coupled to `activities.json` on purpose, consistent with the project's fixture-first/deterministic-testing design. If the fixture changes, these assertions need updating too.
+- `e2e/filters.spec.js` — Playwright, untagged (full suite only, not CI's `@smoke` run). Covers the date-range filter interaction: filtering narrows the summary/chart to one specific week, clearing it restores all 14 activities. Same fixture-coupling caveat as `smoke.spec.js`.
 - `vite.config.js`'s `test.exclude` includes `e2e/**` — without it, Vitest's default glob picks up Playwright's `.spec.js` files and fails trying to run them with the wrong `test()`/`expect()` API. Found the hard way; keep this if either test file naming convention changes.
 
 ## Scope discipline (v1)
@@ -47,7 +50,7 @@ Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live
 ## Test strategy
 
 - **Unit (Vitest):** all of `stats.js` — totals, weekly bucketing, filter subsets, edge cases (empty data, single activity, missing fields).
-- **E2E (Playwright):** two tiers via tags, only the first exists yet. `@smoke` (`e2e/smoke.spec.js`: loads, summary renders, chart renders — 3 tests) runs on every push in CI. The full set (filter interactions, empty states) is still just planned, lands with Milestone 7's filters.
+- **E2E (Playwright):** two tiers via tags. `@smoke` (`e2e/smoke.spec.js`: loads, summary renders, chart renders — 3 tests) runs on every push in CI. The full set adds `e2e/filters.spec.js` (2 tests, date-range filter interaction) — runs on demand only (`npm run test:e2e`), not in CI yet. Empty-state coverage still isn't there.
   - **Gotcha found while building the chart (Milestone 5), applied in the smoke test:** Recharts animates the line being drawn in on mount (~1.5s default). A screenshot/assertion taken too early sees only a partial path — looks exactly like a rendering bug (points 2+ appear disconnected) but isn't. The "chart renders" smoke test asserts `.recharts-line-dots circle` count instead of the line path, since dots are placed at final position immediately rather than animating in.
 - **CI (GitHub Actions, `.github/workflows/ci.yml`, added milestone 4 deliberately early):** `npm ci` → `npm test` → `npm run build` → install Playwright's chromium → `npm run test:e2e:smoke` → upload the HTML report as an artifact (`if: always()`, so it uploads even on failure), on push/PR to `main`. Runs on Node 20 in the runner (not the local Node v21.6.1 — sidesteps the `styleText`/`rolldown` gotcha below entirely, though `vitest` is pinned regardless). Confirmed actually green on GitHub via `gh run list`, not just locally.
 

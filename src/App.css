@@ -31,3 +31,17 @@
   margin-top: 3rem;
   text-align: left;
 }
+
+.date-range-filter {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.date-range-filter label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  color: #888;
+}

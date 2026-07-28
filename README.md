@@ -33,13 +33,13 @@ exists locally for development but is gitignored and never shipped — see
   rendering anything.
 - **E2E tests (Playwright)** cover the UI, tagged in two layers: `@smoke`
   (loads, summary renders, chart renders) runs on every push; the full set
-  (filter interactions, empty states) runs on demand. Same smoke/regression
-  layering used in production test suites.
+  adds the date-range filter interaction and runs on demand. Same
+  smoke/regression layering used in production test suites.
 - **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
   `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
   HTML report as an artifact. The full Playwright suite (filter
-  interactions, empty states) still runs on demand only — lands with
-  milestone 7's filters.
+  interactions) runs on demand only, by design — not part of the push
+  gate.
 
 ## Running locally
 

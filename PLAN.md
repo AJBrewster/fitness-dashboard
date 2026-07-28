@@ -110,7 +110,13 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
 - [x] **4. GitHub Actions CI** — `.github/workflows/ci.yml` runs `npm ci`, `npm test`, `npm run build` on push/PR to `main`; badge added to README. **Note:** badge won't show green until this gets pushed and the workflow actually runs on GitHub — it'll read "no status"/unknown locally.
 - [x] **5. Chart** — `WeeklyDistanceChart` (Recharts line chart) renders weekly distance from `getWeeklyDistance`; verified in a real headless-browser run (screenshot + zero console errors), not just a successful build
 - [x] **6. Playwright smoke tests** — `@smoke`-tagged e2e (`e2e/smoke.spec.js`: loads, summary renders, chart renders) passing locally and wired into CI with an HTML report artifact ← **minimum viable portfolio piece**
-- [ ] **7. Filters + tests** — filtering updates summary and chart, covered at both levels
+- [x] **7. Filters + tests** — `DateRangeFilter` (date-range chosen over
+      activity-type; v1 Scope only calls for one) wired into `App.jsx`,
+      filtering updates `Summary` and the chart together. Unit-level
+      coverage was already in place (`filterByDateRange` tests from
+      milestone 2); added `e2e/filters.spec.js` (2 tests, full suite not
+      `@smoke`) for the UI interaction, verified visually with screenshots
+      too, not just assertions.
 - [ ] **8. README polish** — screenshot, testing rationale, linkable in applications
 
 ## Test plan
