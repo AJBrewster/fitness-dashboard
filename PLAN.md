@@ -114,9 +114,11 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
       activity-type; v1 Scope only calls for one) wired into `App.jsx`,
       filtering updates `Summary` and the chart together. Unit-level
       coverage was already in place (`filterByDateRange` tests from
-      milestone 2); added `e2e/filters.spec.js` (2 tests, full suite not
-      `@smoke`) for the UI interaction, verified visually with screenshots
-      too, not just assertions.
+      milestone 2); `e2e/filters.spec.js` (5 tests, full suite not
+      `@smoke`) covers the UI interaction: basic filter + clear, a
+      no-match range (zeroed summary, 0 chart dots), a partial
+      (one-sided) range (stays unfiltered), and a single-day range.
+      Verified visually with screenshots too, not just assertions.
 - [ ] **8. README polish** — screenshot, testing rationale, linkable in applications
 
 ## Test plan
