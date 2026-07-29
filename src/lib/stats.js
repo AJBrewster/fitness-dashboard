@@ -63,6 +63,17 @@ export function filterByType(activities, type) {
   return activities.filter((a) => a.type === type);
 }
 
+// Counts per activity type, most common first — feeds the activity-type
+// breakdown chart.
+export function getActivityTypeBreakdown(activities) {
+  const countsByType = new Map();
+  for (const activity of activities) {
+    countsByType.set(activity.type, (countsByType.get(activity.type) ?? 0) + 1);
+  }
+
+  return Array.from(countsByType, ([type, count]) => ({ type, count })).sort((a, b) => b.count - a.count);
+}
+
 export function filterByDateRange(activities, start, end) {
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();

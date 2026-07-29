@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getTotals, getWeeklyDistance, filterByType, filterByDateRange } from './stats.js';
+import { getTotals, getWeeklyDistance, filterByType, filterByDateRange, getActivityTypeBreakdown } from './stats.js';
 
 describe('getTotals', () => {
   it('sums distance, duration, and counts activities', () => {
@@ -133,6 +133,30 @@ describe('filterByType', () => {
 
   it('returns an empty array when given an empty list', () => {
     expect(filterByType([], 'running')).toEqual([]);
+  });
+});
+
+describe('getActivityTypeBreakdown', () => {
+  it('counts activities per type, most common first', () => {
+    const activities = [
+      { type: 'running' },
+      { type: 'walking' },
+      { type: 'running' },
+      { type: 'running' },
+      { type: 'walking' },
+    ];
+    expect(getActivityTypeBreakdown(activities)).toEqual([
+      { type: 'running', count: 3 },
+      { type: 'walking', count: 2 },
+    ]);
+  });
+
+  it('returns an empty array for no activities', () => {
+    expect(getActivityTypeBreakdown([])).toEqual([]);
+  });
+
+  it('handles a single activity', () => {
+    expect(getActivityTypeBreakdown([{ type: 'ultimate_disc' }])).toEqual([{ type: 'ultimate_disc', count: 1 }]);
   });
 });
 

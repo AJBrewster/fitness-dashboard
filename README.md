@@ -27,12 +27,12 @@ exists locally for development but is gitignored and never shipped — see
 
 ## Testing approach
 
-- **Unit tests (Vitest, 18 tests)** cover the calculation logic — totals,
+- **Unit tests (Vitest, 21 tests)** cover the calculation logic — totals,
   weekly rollups, filters, streak (longest run of consecutive days with an
-  activity), and edge cases (empty data, a single activity, missing
-  fields) — which lives in pure functions in `src/lib/stats.js`,
-  deliberately separated from React components so the math is testable
-  without rendering anything.
+  activity), activity-type breakdown, and edge cases (empty data, a single
+  activity, missing fields) — which lives in pure functions in
+  `src/lib/stats.js`, deliberately separated from React components so the
+  math is testable without rendering anything.
 - **E2E tests (Playwright, 8 tests)** cover the UI, tagged in two layers:
   `@smoke` (3 tests — loads, summary renders, chart renders) runs on every
   push; the full set adds 5 more covering the date-range filter (basic

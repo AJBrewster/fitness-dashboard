@@ -76,10 +76,47 @@ multi-user.
      `~/.garminconnect` and last ~6 months — re-run
      `uvx --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp-auth --force-reauth`
      when they expire (check by ~2027-01-21). The wrapper itself is unofficial
-     and can silently go stale against Garmin's API — periodically pull the
-     latest with
-     `uvx --refresh --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp`
-     rather than assuming the cached build still works.
+     and can silently go stale against Garmin's API.
+   - **Actual live setup, corrected 2026-07-29:** the `garmin` MCP server
+     Claude actually connects to (configured in
+     `~/Library/Application Support/Claude/claude_desktop_config.json`'s
+     `mcpServers.garmin`) runs from a **local clone at `~/garmin_mcp`**, not
+     directly from `git+https://github.com/Taxuspt/garmin_mcp` — that git
+     URL is only useful for one-off CLI testing (`uvx --from git+...`),
+     which spins up a separate ephemeral environment and does **not** affect
+     the live connection. To pick up a fix in the live connection: update
+     `~/garmin_mcp` (`git pull`, or hand-edit), then **reload/restart VS
+     Code** (Cmd+Shift+P → "Developer: Reload Window", or fully quit and
+     reopen) — that's what respawns the MCP server subprocess in this setup.
+   - **Break #1, hit and fixed 2026-07-29:** every wellness/health endpoint
+     (sleep, heart rate, stress, training readiness, body battery,
+     weigh-ins — but *not* the activity-log endpoints used above) failed
+     with `No module named 'rich.traceback'`. Root cause: `~/garmin_mcp`'s
+     `pyproject.toml` declared `mcp>=1.28.1` with no upper bound; `mcp`
+     2.0.0 landed on PyPI and renamed `mcp.server.fastmcp` →
+     `mcp.server.mcpserver` (`FastMCP` → `MCPServer`), so any fresh
+     dependency resolve silently picks up the breaking 2.x release. Matches
+     [Taxuspt/garmin_mcp#227](https://github.com/Taxuspt/garmin_mcp/pull/227)
+     exactly (open, approved, not yet merged as of 2026-07-29). Fix: cap
+     `mcp>=1.28.1,<2` in `pyproject.toml` + re-resolve `uv.lock` — was
+     already sitting uncommitted in `~/garmin_mcp` when discovered.
+   - **Break #2, same day, different cause:** fixing `~/garmin_mcp` and
+     reloading VS Code *still* didn't reconnect the tools. Turned out
+     Claude Code (the VS Code extension) has its **own** MCP config,
+     separate from `claude_desktop_config.json` — managed via `claude mcp`,
+     stored in `~/.claude.json` (scope "user"). That config had `garmin`
+     pointed at `--from git+https://github.com/Taxuspt/garmin_mcp` directly
+     (the unfixed upstream repo), not the local clone — the exact "ephemeral
+     env, doesn't see local fixes" trap, but baked into persistent config.
+     Fixed via `claude mcp remove garmin -s user` then `claude mcp add
+     garmin -s user -- /Users/alexbrewster/.local/bin/uvx --python 3.12
+     --from /Users/alexbrewster/garmin_mcp garmin-mcp`. Confirmed via
+     `claude mcp get garmin` ("✔ Connected"), and a **new session** (a
+     mid-session config fix doesn't surface newly-available tools in the
+     session that's already running). Full pull of sleep/HR/stress/VO2
+     max/body battery/weigh-ins succeeded right after. If `garmin` tools
+     ever go missing again: check `claude mcp get garmin` (which repo/path
+     it's using) *before* assuming it's a `~/garmin_mcp` staleness issue.
 5. **Long-term (post-v1, tracked, not decided):** a flat JSON fixture won't
    scale past v1 if this becomes a real ongoing tool — a DB (even SQLite)
    is the likely next step once live sync is in play. Out of scope for v1;
@@ -161,6 +198,42 @@ Live Garmin sync behind `lib/data.js` · deploy + link · visual regression
 open: the real-Garmin-data tension above (a product decision, not a coding
 task), and the LinkedIn link (Alex's own task, not something to do from
 here).
+
+## Post-v1: expanded data (started 2026-07-29, prep for a redesign)
+
+Before redesigning the UI, Alex wants more data available to design around:
+sleep score, activity-type breakdown, heart rate, VO2 max, body battery,
+weight, stress, and training readiness/status. **Scope for this pass is
+data-layer only** — fixtures + `lib/data.js`/`stats.js` functions, tested;
+no new UI. The redesign is what actually displays this.
+
+- **New fixture pairs, same real-local/synthetic-committed pattern as
+  `activities.json`:**
+  - `src/data/wellness.json` / `.local.json` — one record per day: sleep
+    score, resting/avg/max heart rate, avg/max stress, body battery
+    charged/drained, training readiness score, training status label, VO2
+    max. Real data covers 2026-07-15..2026-07-21 (7 days — sleep, HR,
+    stress, training readiness, and training status are all per-day-only
+    endpoints, so a wider window means proportionally more MCP calls).
+  - `src/data/vo2MaxTrend.json` / `.local.json` — sparser long-range trend
+    (real: 8 points, 2026-05-01..2026-07-21) — VO2 max updates gradually,
+    so a multi-month view is more meaningful than a daily one. Separate
+    from the daily `vo2Max` field in `wellness.json` on purpose — different
+    time granularity, different use.
+  - `src/data/weighIns.json` / `.local.json` — date + weight in kg. Real
+    data: 25 measurements, 2026-05-01..2026-07-21.
+  - Same privacy posture as `activities.local.json`: the `.local.json`
+    files are gitignored, real, and never committed. The committed
+    non-`.local` files are small hand-written synthetic samples spanning
+    the same June 2026 window as `activities.json`, for consistency if a
+    future combined view lines them up.
+- `src/lib/data.js` — added `getWellness()`, `getVo2MaxTrend()`,
+  `getWeighIns()`, same pattern as `getActivities()`.
+- `src/lib/stats.js` — added `getActivityTypeBreakdown(activities)`: counts
+  per activity type, most common first. Uses the `type` field already on
+  every activity — no new fixture needed for this one. 3 new Vitest cases.
+- Not wired into `App.jsx` or any component yet — by design, this round is
+  data + tests only.
 
 ## Known failure modes (watch for these)
 

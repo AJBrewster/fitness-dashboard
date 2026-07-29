@@ -8,7 +8,10 @@ test-results/
 logs
 *.log
 
-# real Garmin data snapshot (100 activities, MCP pull) — local-only,
-# optional richer dataset for local dev. src/data/activities.json (the
-# tracked path lib/data.js reads) is a small synthetic sample instead.
+# real Garmin data snapshots (MCP pull) — local-only, optional richer
+# datasets for local dev. The non-.local counterparts (the tracked
+# paths lib/data.js reads) are small synthetic samples instead.
 src/data/activities.local.json
+src/data/wellness.local.json
+src/data/vo2MaxTrend.local.json
+src/data/weighIns.local.json
