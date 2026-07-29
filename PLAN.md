@@ -105,8 +105,8 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
 
 - [x] **0. Repo setup** — git init, plan, README skeleton, pushed public
 - [x] **1. Vite app + fixture** — blank app runs, `activities.json` committed, data loads via `lib/data.js`
-- [x] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields). **Note:** `getTotals` covers distance/duration/count only — `streak` (also called for in the v1 Scope section above) isn't implemented yet; needs its own pass.
-- [x] **3. Summary component** — real numbers on screen. **Note:** shows distance/time/activity count only — no `streak` yet (still not implemented in `stats.js`, see milestone 2 note above)
+- [x] **2. `stats.js` + unit tests** — totals, weekly rollup, filters as pure functions; Vitest passing incl. edge cases (empty data, single activity, missing fields). `streak` added 2026-07-29 (after v1's other milestones were already done) as the longest run of consecutive calendar days with an activity — deliberately not "current streak as of today," since that would make assertions against the fixture depend on the system clock.
+- [x] **3. Summary component** — real numbers on screen, including `streak` as a fourth stat (added 2026-07-29)
 - [x] **4. GitHub Actions CI** — `.github/workflows/ci.yml` runs `npm ci`, `npm test`, `npm run build` on push/PR to `main`; badge added to README. **Note:** badge won't show green until this gets pushed and the workflow actually runs on GitHub — it'll read "no status"/unknown locally.
 - [x] **5. Chart** — `WeeklyDistanceChart` (Recharts line chart) renders weekly distance from `getWeeklyDistance`; verified in a real headless-browser run (screenshot + zero console errors), not just a successful build
 - [x] **6. Playwright smoke tests** — `@smoke`-tagged e2e (`e2e/smoke.spec.js`: loads, summary renders, chart renders) passing locally and wired into CI with an HTML report artifact ← **minimum viable portfolio piece**
@@ -147,12 +147,14 @@ Live Garmin sync behind `lib/data.js` · deploy + link · visual regression
       calling v1 done: is "real Garmin data" satisfied by the local-only
       snapshot existing, or does this item require the public app itself to
       show real (if genericized) data?
-- [x] Unit tests on data logic — 15 Vitest tests, `stats.js`
+- [x] Unit tests on data logic — 18 Vitest tests, `stats.js` (was 15; +3 for
+      `streak`)
 - [x] Playwright e2e, smoke-tagged — `e2e/smoke.spec.js`, 3 tests
 - [x] CI running on push, badge green — confirmed via `gh run list`, last two
       pushes both succeeded
-- [x] README with screenshot + testing rationale — `docs/screenshot.png`,
-      rationale updated with concrete test counts
+- [x] README with screenshot + testing rationale — `docs/screenshot.png`
+      (retaken 2026-07-29 to include the `streak` stat), rationale updated
+      with concrete test counts
 - [ ] Link on LinkedIn profile
 
 **v1 status:** all 8 milestones done. Two Definition-of-Done items remain

@@ -4,13 +4,14 @@ import { getTotals, getWeeklyDistance, filterByType, filterByDateRange } from '.
 describe('getTotals', () => {
   it('sums distance, duration, and counts activities', () => {
     const activities = [
-      { distanceMeters: 1000, durationSeconds: 300 },
-      { distanceMeters: 2000, durationSeconds: 600 },
+      { startTime: '2026-07-01T09:00:00', distanceMeters: 1000, durationSeconds: 300 },
+      { startTime: '2026-07-02T09:00:00', distanceMeters: 2000, durationSeconds: 600 },
     ];
     expect(getTotals(activities)).toEqual({
       totalDistanceMeters: 3000,
       totalDurationSeconds: 900,
       activityCount: 2,
+      streak: 2,
     });
   });
 
@@ -19,28 +20,63 @@ describe('getTotals', () => {
       totalDistanceMeters: 0,
       totalDurationSeconds: 0,
       activityCount: 0,
+      streak: 0,
     });
   });
 
   it('handles a single activity', () => {
-    const activities = [{ distanceMeters: 500, durationSeconds: 120 }];
+    const activities = [{ startTime: '2026-07-01T09:00:00', distanceMeters: 500, durationSeconds: 120 }];
     expect(getTotals(activities)).toEqual({
       totalDistanceMeters: 500,
       totalDurationSeconds: 120,
       activityCount: 1,
+      streak: 1,
     });
   });
 
   it('treats missing distance/duration fields as zero', () => {
     const activities = [
-      { distanceMeters: 1000, durationSeconds: 300 },
-      { type: 'strength_training' }, // no distanceMeters/durationSeconds at all
+      { startTime: '2026-07-01T09:00:00', distanceMeters: 1000, durationSeconds: 300 },
+      { startTime: '2026-07-02T09:00:00', type: 'strength_training' }, // no distanceMeters/durationSeconds at all
     ];
     expect(getTotals(activities)).toEqual({
       totalDistanceMeters: 1000,
       totalDurationSeconds: 300,
       activityCount: 2,
+      streak: 2,
     });
+  });
+
+  it('finds the longest streak, not just the most recent one', () => {
+    const dates = [
+      '2026-07-01', // streak of 2 (07-01, 07-02)
+      '2026-07-02',
+      '2026-07-05', // gap, streak of 4 (07-05..07-08)
+      '2026-07-06',
+      '2026-07-07',
+      '2026-07-08',
+      '2026-07-20', // gap, streak of 1
+    ];
+    const activities = dates.map((date) => ({ startTime: `${date}T09:00:00` }));
+    expect(getTotals(activities).streak).toBe(4);
+  });
+
+  it('treats multiple activities on the same day as one day, not a longer streak', () => {
+    const activities = [
+      { startTime: '2026-07-01T06:00:00' },
+      { startTime: '2026-07-01T18:00:00' }, // same day, second activity
+      { startTime: '2026-07-02T06:00:00' },
+    ];
+    expect(getTotals(activities).streak).toBe(2);
+  });
+
+  it('is order-independent — unsorted input still finds the right streak', () => {
+    const activities = [
+      { startTime: '2026-07-08T09:00:00' },
+      { startTime: '2026-07-01T09:00:00' },
+      { startTime: '2026-07-02T09:00:00' },
+    ];
+    expect(getTotals(activities).streak).toBe(2);
   });
 });
 

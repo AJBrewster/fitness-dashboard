@@ -8,22 +8,38 @@ function formatDuration(seconds) {
   return `${hours}h ${minutes}m`;
 }
 
+function formatStreak(days) {
+  return `${days} day${days === 1 ? '' : 's'}`;
+}
+
 function Summary({ totals }) {
-  const { totalDistanceMeters, totalDurationSeconds, activityCount } = totals;
+  const { totalDistanceMeters, totalDurationSeconds, activityCount, streak } = totals;
 
   return (
     <section className="summary">
       <div className="summary-stat">
-        <span className="summary-value">{formatDistance(totalDistanceMeters)}</span>
+        <span className="summary-value" data-testid="total-distance">
+          {formatDistance(totalDistanceMeters)}
+        </span>
         <span className="summary-label">Total distance</span>
       </div>
       <div className="summary-stat">
-        <span className="summary-value">{formatDuration(totalDurationSeconds)}</span>
+        <span className="summary-value" data-testid="total-duration">
+          {formatDuration(totalDurationSeconds)}
+        </span>
         <span className="summary-label">Total time</span>
       </div>
       <div className="summary-stat">
-        <span className="summary-value">{activityCount}</span>
+        <span className="summary-value" data-testid="activity-count">
+          {activityCount}
+        </span>
         <span className="summary-label">Activities</span>
+      </div>
+      <div className="summary-stat">
+        <span className="summary-value" data-testid="streak">
+          {formatStreak(streak)}
+        </span>
+        <span className="summary-label">Longest streak</span>
       </div>
     </section>
   );

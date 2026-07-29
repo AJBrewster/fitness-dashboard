@@ -10,14 +10,14 @@ test('dashboard loads', { tag: '@smoke' }, async ({ page }) => {
 
 test('summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
   await page.goto('/');
-  const summary = page.locator('.summary');
-  // Scoped to `.summary`, not page-wide getByText: a value can
+  // Assert via data-testid, not getByText: a summary value can
   // coincidentally match text Recharts renders elsewhere in the SVG
   // (axis ticks, tooltip markup), which trips Playwright's strict-mode
-  // "multiple elements" check — hit this for real in filters.spec.js.
-  await expect(summary.getByText('73.6 km')).toBeVisible();
-  await expect(summary.getByText('10h 7m')).toBeVisible();
-  await expect(summary.getByText('Activities')).toBeVisible();
+  // "multiple elements" check — hit this for real before testids existed.
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
+  await expect(page.getByTestId('total-duration')).toHaveText('10h 7m');
+  await expect(page.getByTestId('activity-count')).toHaveText('14');
+  await expect(page.getByTestId('streak')).toHaveText('3 days');
 });
 
 test('weekly distance chart renders', { tag: '@smoke' }, async ({ page }) => {

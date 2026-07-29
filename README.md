@@ -27,9 +27,10 @@ exists locally for development but is gitignored and never shipped — see
 
 ## Testing approach
 
-- **Unit tests (Vitest, 15 tests)** cover the calculation logic — totals,
-  weekly rollups, filters, and edge cases (empty data, a single activity,
-  missing fields) — which lives in pure functions in `src/lib/stats.js`,
+- **Unit tests (Vitest, 18 tests)** cover the calculation logic — totals,
+  weekly rollups, filters, streak (longest run of consecutive days with an
+  activity), and edge cases (empty data, a single activity, missing
+  fields) — which lives in pure functions in `src/lib/stats.js`,
   deliberately separated from React components so the math is testable
   without rendering anything.
 - **E2E tests (Playwright, 8 tests)** cover the UI, tagged in two layers:
