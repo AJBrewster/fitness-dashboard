@@ -7,7 +7,7 @@ and filtering — built as a testing-first portfolio project.
 
 > 🚧 **In progress.** See [PLAN.md](PLAN.md) for milestones and current status.
 
-<!-- TODO milestone 8: screenshot here -->
+![Fitness Dashboard screenshot](docs/screenshot.png)
 
 ## Why fixture data instead of the Garmin API
 
@@ -27,19 +27,21 @@ exists locally for development but is gitignored and never shipped — see
 
 ## Testing approach
 
-- **Unit tests (Vitest)** cover the calculation logic — totals, weekly
-  rollups, filters — which lives in pure functions in `src/lib/stats.js`,
-  deliberately separated from React components so the math is testable without
-  rendering anything.
-- **E2E tests (Playwright)** cover the UI, tagged in two layers: `@smoke`
-  (loads, summary renders, chart renders) runs on every push; the full set
-  adds the date-range filter interaction and runs on demand. Same
-  smoke/regression layering used in production test suites.
+- **Unit tests (Vitest, 15 tests)** cover the calculation logic — totals,
+  weekly rollups, filters, and edge cases (empty data, a single activity,
+  missing fields) — which lives in pure functions in `src/lib/stats.js`,
+  deliberately separated from React components so the math is testable
+  without rendering anything.
+- **E2E tests (Playwright, 8 tests)** cover the UI, tagged in two layers:
+  `@smoke` (3 tests — loads, summary renders, chart renders) runs on every
+  push; the full set adds 5 more covering the date-range filter (basic
+  filter + clear, a no-match range, a partial/one-sided range, a
+  single-day range) and runs on demand. Same smoke/regression layering
+  used in production test suites.
 - **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
   `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
-  HTML report as an artifact. The full Playwright suite (filter
-  interactions) runs on demand only, by design — not part of the push
-  gate.
+  HTML report as an artifact even on failure. The full Playwright suite
+  runs on demand only, by design — not part of the push gate.
 
 ## Running locally
 

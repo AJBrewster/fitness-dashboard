@@ -119,7 +119,11 @@ Each leaves the repo working and committable. Sessions are ~1–2 hours.
       no-match range (zeroed summary, 0 chart dots), a partial
       (one-sided) range (stays unfiltered), and a single-day range.
       Verified visually with screenshots too, not just assertions.
-- [ ] **8. README polish** — screenshot, testing rationale, linkable in applications
+- [x] **8. README polish** — real screenshot (`docs/screenshot.png`, taken
+      with Playwright/chromium against the actual dev server, not mocked up)
+      and testing rationale updated with concrete test counts (15 unit, 8
+      e2e). This is the last of the 8 milestones — see the note below on
+      what's still open before calling v1 fully done.
 
 ## Test plan
 
@@ -147,9 +151,14 @@ Live Garmin sync behind `lib/data.js` · deploy + link · visual regression
 - [x] Playwright e2e, smoke-tagged — `e2e/smoke.spec.js`, 3 tests
 - [x] CI running on push, badge green — confirmed via `gh run list`, last two
       pushes both succeeded
-- [ ] README with screenshot + testing rationale — rationale done, screenshot
-      still pending (Milestone 8)
+- [x] README with screenshot + testing rationale — `docs/screenshot.png`,
+      rationale updated with concrete test counts
 - [ ] Link on LinkedIn profile
+
+**v1 status:** all 8 milestones done. Two Definition-of-Done items remain
+open: the real-Garmin-data tension above (a product decision, not a coding
+task), and the LinkedIn link (Alex's own task, not something to do from
+here).
 
 ## Known failure modes (watch for these)
 

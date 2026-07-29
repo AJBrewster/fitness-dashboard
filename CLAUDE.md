@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-This repo is at **Milestone 7** (Vite + React app scaffolded, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite passing, `Summary` + `WeeklyDistanceChart` rendering real numbers, GitHub Actions CI running unit tests + build + Playwright smoke on push, `DateRangeFilter` wired into `App.jsx` and updating both the summary and chart — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. Only Milestone 8 (README polish/screenshot) remains for v1.
+**All 8 milestones are done** (Vite + React app, fixture wired through `src/lib/data.js`, `src/lib/stats.js` + Vitest suite, `Summary` + `WeeklyDistanceChart` + `DateRangeFilter` all wired into `App.jsx`, CI running unit tests + build + Playwright smoke, README polished with a real screenshot — see `PLAN.md`). `getTotals` still doesn't include `streak` even though it's in the v1 Scope, so `Summary` doesn't show one — flagged as a known gap, not silently done. Two Definition-of-Done items remain genuinely open, not coding tasks: whether the synthetic committed fixture satisfies "renders real Garmin data" (see `PLAN.md`'s Data strategy and Definition of Done sections), and the LinkedIn link (Alex's own task).
 
 ```bash
 npm install
