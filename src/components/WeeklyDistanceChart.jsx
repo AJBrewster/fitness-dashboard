@@ -7,7 +7,7 @@ function WeeklyDistanceChart({ weeklyDistance }) {
   }));
 
   return (
-    <div className="chart">
+    <div className="chart chart-weekly-distance">
       <h2>Weekly distance</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

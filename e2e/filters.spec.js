@@ -10,6 +10,10 @@ import { test, expect } from '@playwright/test';
 // filtered value can coincidentally match text Recharts renders
 // elsewhere in the SVG (axis ticks, tooltip markup), which trips
 // Playwright's strict-mode "multiple elements" check.
+//
+// Chart-dot assertions are scoped to .chart-weekly-distance: the page
+// also has other line charts (VO2 max, weight trend) sharing the same
+// Recharts dot class, and those aren't affected by the activity filter.
 
 test('filtering by date range updates the summary and chart', async ({ page }) => {
   await page.goto('/');
@@ -21,7 +25,7 @@ test('filtering by date range updates the summary and chart', async ({ page }) =
   await expect(page.getByTestId('total-duration')).toHaveText('2h 30m');
   await expect(page.getByTestId('activity-count')).toHaveText('3');
   await expect(page.getByTestId('streak')).toHaveText('3 days');
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(1);
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(1);
 });
 
 test('clearing the date range shows all activities again', async ({ page }) => {
@@ -36,7 +40,7 @@ test('clearing the date range shows all activities again', async ({ page }) => {
 
   await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
   await expect(page.getByTestId('streak')).toHaveText('3 days');
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(5);
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
 });
 
 test('a range with no matching activities shows a zeroed-out summary', async ({ page }) => {
@@ -50,7 +54,7 @@ test('a range with no matching activities shows a zeroed-out summary', async ({ 
   await expect(page.getByTestId('total-duration')).toHaveText('0h 0m');
   await expect(page.getByTestId('activity-count')).toHaveText('0');
   await expect(page.getByTestId('streak')).toHaveText('0 days');
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(0);
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(0);
 });
 
 test('only one end of the range filled leaves activities unfiltered', async ({ page }) => {
@@ -61,7 +65,7 @@ test('only one end of the range filled leaves activities unfiltered', async ({ p
   // start and end are set.
 
   await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(5);
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
 });
 
 test('a single-day range narrows to exactly that day\'s activity', async ({ page }) => {
@@ -74,5 +78,5 @@ test('a single-day range narrows to exactly that day\'s activity', async ({ page
   await expect(page.getByTestId('total-duration')).toHaveText('0h 35m');
   await expect(page.getByTestId('activity-count')).toHaveText('1');
   await expect(page.getByTestId('streak')).toHaveText('1 day');
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(1);
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(1);
 });

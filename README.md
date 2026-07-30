@@ -2,8 +2,11 @@
 
 [![CI](https://github.com/AJBrewster/fitness-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/AJBrewster/fitness-dashboard/actions/workflows/ci.yml)
 
-A dashboard for Garmin activity data — summary stats, weekly distance trends,
-and filtering — built as a testing-first portfolio project.
+A dashboard for Garmin activity and wellness data — activity summary stats,
+weekly distance trends, activity-type breakdown, date filtering, plus daily
+wellness (sleep, heart rate, stress, body battery, training readiness/status)
+and longer-range trends (VO2 max, weight) — built as a testing-first
+portfolio project.
 
 > 🚧 **In progress.** See [PLAN.md](PLAN.md) for milestones and current status.
 
@@ -23,7 +26,11 @@ The committed fixture is a small set of synthetic activities, not real
 Garmin data — kept that way so the repo is safe to publish and runs
 identically for anyone who clones it. (A real, one-time Garmin data snapshot
 exists locally for development but is gitignored and never shipped — see
-`PLAN.md`'s Data strategy if you're curious about the full reasoning.)
+`PLAN.md`'s Data strategy if you're curious about the full reasoning.) The
+wellness, VO2 max, and weight data follow the identical pattern —
+`src/data/wellness.json`, `vo2MaxTrend.json`, and `weighIns.json` are the
+small committed synthetic samples; their real, gitignored `.local.json`
+counterparts never ship.
 
 ## Testing approach
 
@@ -33,12 +40,12 @@ exists locally for development but is gitignored and never shipped — see
   activity, missing fields) — which lives in pure functions in
   `src/lib/stats.js`, deliberately separated from React components so the
   math is testable without rendering anything.
-- **E2E tests (Playwright, 8 tests)** cover the UI, tagged in two layers:
-  `@smoke` (3 tests — loads, summary renders, chart renders) runs on every
-  push; the full set adds 5 more covering the date-range filter (basic
-  filter + clear, a no-match range, a partial/one-sided range, a
-  single-day range) and runs on demand. Same smoke/regression layering
-  used in production test suites.
+- **E2E tests (Playwright, 11 tests)** cover the UI, tagged in two layers:
+  `@smoke` (6 tests — loads, summary renders, weekly chart, activity-type
+  breakdown, wellness summary, trend charts) runs on every push; the full
+  set adds 5 more covering the date-range filter (basic filter + clear, a
+  no-match range, a partial/one-sided range, a single-day range) and runs
+  on demand. Same smoke/regression layering used in production test suites.
 - **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
   `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
   HTML report as an artifact even on failure. The full Playwright suite

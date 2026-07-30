@@ -26,5 +26,28 @@ test('weekly distance chart renders', { tag: '@smoke' }, async ({ page }) => {
   // Test strategy gotcha) — assert on the dots rather than a
   // fixed-timeout screenshot, since dots are placed at final position
   // immediately while the connecting line animates in over ~1.5s.
-  await expect(page.locator('.recharts-line-dots circle')).toHaveCount(5);
+  // Scoped to .chart-weekly-distance: the page now has other line charts
+  // too (VO2 max, weight trend), which share the same Recharts dot class.
+  await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
+});
+
+test('activity type breakdown renders one bar per type', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.chart-activity-types .recharts-bar-rectangle')).toHaveCount(7);
+});
+
+test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByTestId('training-readiness')).toHaveText('61');
+  await expect(page.getByText('Training Readiness — Good · Maintaining')).toBeVisible();
+  await expect(page.getByTestId('sleep-score')).toHaveText('70');
+  await expect(page.getByTestId('body-battery')).toHaveText('58');
+  await expect(page.getByTestId('stress-level')).toHaveText('26');
+  await expect(page.getByTestId('resting-hr')).toHaveText('54');
+});
+
+test('trend charts render', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.chart-vo2-max .recharts-line-dots circle')).toHaveCount(4);
+  await expect(page.locator('.chart-weight .recharts-line-dots circle')).toHaveCount(5);
 });

@@ -45,3 +45,67 @@
   font-size: 0.875rem;
   color: #888;
 }
+
+.page-section {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.page-section:first-of-type {
+  margin-top: 2rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.section-title {
+  text-align: left;
+}
+
+.wellness-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.wellness-stat {
+  display: flex;
+  flex-direction: column;
+  max-width: 220px;
+}
+
+.wellness-stat-highlight {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 8px;
+}
+
+.wellness-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.wellness-value.status-good {
+  color: var(--status-good);
+}
+
+.wellness-value.status-warning {
+  color: var(--status-warning);
+}
+
+.wellness-value.status-serious {
+  color: var(--status-serious);
+}
+
+.wellness-label {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.wellness-date {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+}

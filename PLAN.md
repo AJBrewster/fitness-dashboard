@@ -199,13 +199,15 @@ open: the real-Garmin-data tension above (a product decision, not a coding
 task), and the LinkedIn link (Alex's own task, not something to do from
 here).
 
-## Post-v1: expanded data (started 2026-07-29, prep for a redesign)
+## Post-v1: expanded data + UI (started 2026-07-29)
 
-Before redesigning the UI, Alex wants more data available to design around:
-sleep score, activity-type breakdown, heart rate, VO2 max, body battery,
-weight, stress, and training readiness/status. **Scope for this pass is
-data-layer only** — fixtures + `lib/data.js`/`stats.js` functions, tested;
-no new UI. The redesign is what actually displays this.
+Before a full visual redesign, Alex wants sleep score, activity-type
+breakdown, heart rate, VO2 max, body battery, weight, stress, and training
+readiness/status available — and, as of 2026-07-30, actually on screen.
+**Explicit scope call:** add sections in the *existing* visual style now;
+a full visual redesign (layout/colors/typography rework) is a separate,
+later pass — doing both at once risks redesigning around a layout that's
+still shifting.
 
 - **New fixture pairs, same real-local/synthetic-committed pattern as
   `activities.json`:**
@@ -232,8 +234,36 @@ no new UI. The redesign is what actually displays this.
 - `src/lib/stats.js` — added `getActivityTypeBreakdown(activities)`: counts
   per activity type, most common first. Uses the `type` field already on
   every activity — no new fixture needed for this one. 3 new Vitest cases.
-- Not wired into `App.jsx` or any component yet — by design, this round is
-  data + tests only.
+
+**UI added 2026-07-30** — page restructured into three sections (`App.jsx`):
+- **Activity** — existing Summary/chart/filter, plus a new
+  `ActivityTypeBreakdown` bar chart.
+- **Today's Wellness** — new `WellnessSummary`: Training Readiness as the
+  highlighted stat (color-banded good/moderate/low against the score, always
+  paired with a text label — never color-alone), plus sleep score, body
+  battery charged, avg stress, resting HR from the most recent day in
+  `wellness.json`.
+- **Trends** — new `Vo2MaxChart` and `WeightChart`, both single-line charts
+  reusing the app's existing accent color for visual consistency (no CVD
+  concern with a single series).
+
+Used the `dataviz` skill for the one place color assignment actually
+mattered: `ActivityTypeBreakdown`'s 7 activity types get a **fixed**
+type→color mapping (validated via `validate_palette.js` — all hard gates
+pass in both light and dark against this app's surfaces), independent of
+the count-sorted bar order. This matters because color must follow the
+entity, not its rank — a bar chart correctly reorders by count on
+refilter, but if color also came from sort position, the same activity
+type could silently change color between renders. Verified with real
+screenshots in both `prefers-color-scheme: dark` and `light`, not just a
+build check.
+
+3 new `@smoke` Playwright tests (activity-type bars, wellness numbers,
+trend chart dots) — 11 e2e total now, up from 8. Also had to rescope the
+pre-existing `.recharts-line-dots circle` assertions in `smoke.spec.js`/
+`filters.spec.js` to `.chart-weekly-distance .recharts-line-dots circle`:
+adding two more line charts (VO2 max, weight) to the page meant the old
+unscoped selector started counting dots from all three charts combined.
 
 ## Known failure modes (watch for these)
 

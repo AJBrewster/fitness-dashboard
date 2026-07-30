@@ -11,6 +11,26 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Categorical chart palette (dark-mode steps, this app's default) —
+     validated via the dataviz skill's validate_palette.js: fixed hue
+     order, worst adjacent CVD ΔE 8.4, worst adjacent normal-vision ΔE
+     19.3, all 7 slots >=3:1 against this dark surface. */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+
+  /* Status palette — fixed, never themed; same steps both modes. Always
+     paired with a text label, never color-alone (see WellnessSummary). */
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+
+  --text-secondary: #c3c2b7;
 }
 
 a {
@@ -58,6 +78,21 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+
+    /* Categorical palette, light-mode steps — same validated ordering,
+       worst adjacent CVD ΔE 9.1, worst adjacent normal-vision ΔE 19.6.
+       Slots 3/4/5 (aqua/yellow/magenta) sit below 3:1 on this light
+       surface by design — mitigated by always showing a direct label
+       (see ActivityTypeBreakdown), never relying on color alone. */
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --series-6: #008300;
+    --series-7: #4a3aa7;
+
+    --text-secondary: #52514e;
   }
   a:hover {
     color: #747bff;
