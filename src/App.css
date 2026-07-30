@@ -1,6 +1,196 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ---------- app shell: sidebar + main ---------- */
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-ink);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand {
+  padding: 0 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.brand-sub {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--sidebar-ink-muted);
+  margin-top: 0.2rem;
+}
+
+.nav-group-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sidebar-ink-muted);
+  padding: 0 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: none;
+  color: var(--sidebar-ink);
+  font-size: 0.85rem;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-link.active {
+  background: var(--sidebar-active-bg);
+  color: #fff;
+}
+
+.nav-link[disabled] {
+  color: var(--sidebar-ink-muted);
+  cursor: default;
+  opacity: 0.6;
+}
+
+.nav-link[disabled]:hover {
+  background: none;
+}
+
+.nav-soon {
+  margin-left: auto;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-spacer {
+  flex: 1;
+}
+
+.sidebar-foot {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+  font-size: 0.82rem;
+}
+
+.switch {
+  width: 34px;
+  height: 19px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: none;
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s ease;
+}
+
+.switch.on {
+  background: var(--accent);
+}
+
+.switch.on::after {
+  transform: translateX(15px);
+}
+
+.sidebar-note {
+  font-size: 0.65rem;
+  color: var(--sidebar-ink-muted);
+  padding: 0 0.5rem;
+  margin: 0;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1rem 2rem;
+  background: inherit;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.topbar-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.content {
+  max-width: 1000px;
   padding: 2rem;
   text-align: center;
 }
@@ -34,9 +224,8 @@
 
 .date-range-filter {
   display: flex;
-  justify-content: center;
+  align-items: center;
   gap: 1.5rem;
-  margin-top: 1.5rem;
 }
 
 .date-range-filter label {
@@ -53,7 +242,7 @@
 }
 
 .page-section:first-of-type {
-  margin-top: 2rem;
+  margin-top: 0;
   padding-top: 0;
   border-top: none;
 }
@@ -108,4 +297,58 @@
   color: #888;
   font-size: 0.8rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+  }
+
+  .brand {
+    margin-bottom: 0;
+  }
+
+  .nav-group-label {
+    display: none;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    margin-bottom: 0;
+  }
+
+  .nav-soon {
+    display: none;
+  }
+
+  .sidebar-spacer {
+    display: none;
+  }
+
+  .sidebar-foot {
+    border-top: none;
+    padding-top: 0;
+    margin-left: auto;
+  }
+
+  .sidebar-note {
+    display: none;
+  }
+
+  .topbar {
+    padding: 1rem 1.25rem;
+  }
+
+  .content {
+    padding: 1.5rem 1.25rem;
+  }
 }

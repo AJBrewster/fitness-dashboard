@@ -51,3 +51,11 @@ test('trend charts render', { tag: '@smoke' }, async ({ page }) => {
   await expect(page.locator('.chart-vo2-max .recharts-line-dots circle')).toHaveCount(4);
   await expect(page.locator('.chart-weight .recharts-line-dots circle')).toHaveCount(5);
 });
+
+test('sidebar "Reports" item is a disabled placeholder, not a live link', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  const reports = page.getByRole('button', { name: /reports/i });
+  await expect(reports).toBeVisible();
+  await expect(reports).toBeDisabled();
+  await expect(reports).toContainText('Soon');
+});

@@ -38,6 +38,15 @@
      6.56:1 on the dark background (#242424), see the light block below
      for the light-mode step (4.88:1 on #ffffff). */
   --accent: #35b8cc;
+
+  /* Sidebar is deliberately always-dark regardless of the app's own
+     light/dark theme (a persistent-chrome pattern, not an oversight) — so
+     these live here once, unthemed, rather than in the light/dark blocks
+     below. */
+  --sidebar-bg: #101724;
+  --sidebar-ink: #cdd6e2;
+  --sidebar-ink-muted: #6f7c90;
+  --sidebar-active-bg: rgba(53, 184, 204, 0.16);
 }
 
 a {
@@ -51,8 +60,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -111,4 +118,45 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Explicit theme override for the dark-mode toggle in the sidebar. An
+   attribute-selector rule like ":root[data-theme]" outranks the plain
+   ":root" specificity of both the default block above and the
+   "prefers-color-scheme" block, in either direction, regardless of source
+   order — so these two blocks are what let a manual choice win over
+   whatever the OS reports. Only the properties that actually differ
+   between modes need repeating here (color, background, the categorical
+   series, --text-secondary, --accent); the --status- and --sidebar-
+   prefixed tokens are never themed, so those are left untouched. */
+:root[data-theme="dark"] {
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+
+  --text-secondary: #c3c2b7;
+  --accent: #35b8cc;
+}
+
+:root[data-theme="light"] {
+  color: #213547;
+  background-color: #ffffff;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+
+  --text-secondary: #52514e;
+  --accent: #0e7c90;
 }
