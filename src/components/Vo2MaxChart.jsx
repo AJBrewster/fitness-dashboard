@@ -10,7 +10,7 @@ function Vo2MaxChart({ vo2MaxTrend }) {
           <XAxis dataKey="date" />
           <YAxis domain={['dataMin - 2', 'dataMax + 2']} />
           <Tooltip formatter={(value) => [value, 'VO2 max']} />
-          <Line type="monotone" dataKey="vo2Max" stroke="#646cff" strokeWidth={2} />
+          <Line type="monotone" dataKey="vo2Max" stroke="var(--accent)" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

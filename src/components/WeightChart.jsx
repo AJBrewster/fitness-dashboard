@@ -10,7 +10,7 @@ function WeightChart({ weighIns }) {
           <XAxis dataKey="date" />
           <YAxis domain={['dataMin - 1', 'dataMax + 1']} unit=" kg" />
           <Tooltip formatter={(value) => [`${value} kg`, 'Weight']} />
-          <Line type="monotone" dataKey="weightKg" stroke="#646cff" strokeWidth={2} />
+          <Line type="monotone" dataKey="weightKg" stroke="var(--accent)" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>

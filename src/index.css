@@ -31,6 +31,13 @@
   --status-serious: #ec835a;
 
   --text-secondary: #c3c2b7;
+
+  /* Single-series accent (line charts, interactive controls) — replaces
+     the stock Vite #646cff on chart strokes. Contrast checked via the
+     dataviz skill's validate_palette.js against this app's real surfaces:
+     6.56:1 on the dark background (#242424), see the light block below
+     for the light-mode step (4.88:1 on #ffffff). */
+  --accent: #35b8cc;
 }
 
 a {
@@ -93,6 +100,10 @@ button:focus-visible {
     --series-7: #4a3aa7;
 
     --text-secondary: #52514e;
+
+    /* Light-mode accent step — 4.88:1 on this surface (#ffffff), see the
+       dark step above for the other mode. */
+    --accent: #0e7c90;
   }
   a:hover {
     color: #747bff;

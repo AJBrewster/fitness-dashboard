@@ -15,7 +15,7 @@ function WeeklyDistanceChart({ weeklyDistance }) {
           <XAxis dataKey="weekStart" />
           <YAxis unit=" km" />
           <Tooltip formatter={(value) => [`${value} km`, 'Distance']} />
-          <Line type="monotone" dataKey="distanceKm" stroke="#646cff" strokeWidth={2} />
+          <Line type="monotone" dataKey="distanceKm" stroke="var(--accent)" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
     </div>
