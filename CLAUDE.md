@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Now in a post-v1 phase (started 2026-07-29, UI added 2026-07-30): sleep score, activity-type breakdown, heart rate, VO2 max, body battery, weight, stress, and training readiness/status** are wired into `lib/data.js`/`stats.js` *and* now on screen — three page sections (Activity / Today's Wellness / Trends). See Architecture below for the fixtures, functions, and components.
 
-**The full visual redesign called out above as a separate later pass is now in progress (started 2026-07-30, see PLAN.md's "Post-v1: visual redesign" section for the phase-by-phase log).** Phases 1-2 are done: a sidebar/topbar app shell replaced the single-column layout, and chart lines re-color via a new `--accent` token. Phases 3-5 (KPI-tile sparklines, activity-type donut, wellness ring gauges) are still the old flat/bar-chart style — expect a visual mix of "new shell, old inner components" until those land.
+**The full visual redesign called out above as a separate later pass is now done (2026-07-30 – 2026-07-31, see `PLAN.md`'s "Post-v1: visual redesign" section for the full phase-by-phase log).** Sidebar/topbar app shell, `--accent`-token chart re-coloring, icon+sparkline KPI tiles, an activity-type donut, and wellness ring gauges (Training Readiness/Sleep Score/Body Battery) all shipped. One known, minor, unfixed rough edge: the dark-mode toggle scrolls off-screen in the collapsed mobile nav bar at narrow (~390px) widths — still functional and still found by tests, just not discoverable without scrolling that row horizontally.
 
 ```bash
 npm install
@@ -70,7 +70,7 @@ In scope: load fixture data, summary stats (distance/time/count/streak), one wee
 
 Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live Garmin sync, multi-user. Don't add these even if asked to "improve" the project — they're deferred on purpose (see "Known failure modes" in `PLAN.md`).
 
-v1 is done; the post-v1 data/UI expansion (see `PLAN.md`'s "Post-v1: expanded data + UI" section) shipped in the *existing* visual style on purpose. **The full visual redesign that was deferred from that phase is now underway** (see `PLAN.md`'s "Post-v1: visual redesign" section) — it's an explicit, approved, phased effort, not scope creep. Follow that section's phase plan rather than reworking layout/colors/typography beyond what the current phase calls for.
+v1 is done; the post-v1 data/UI expansion (see `PLAN.md`'s "Post-v1: expanded data + UI" section) shipped in the *existing* visual style on purpose, and the full visual redesign deferred from that phase (see `PLAN.md`'s "Post-v1: visual redesign" section) is now complete. Any further layout/color/typography changes from here are new scope, not a continuation of an already-approved plan — treat them the same as any other deliberate redesign ask, not as an assumed extension of what's already shipped.
 
 ## Test strategy
 

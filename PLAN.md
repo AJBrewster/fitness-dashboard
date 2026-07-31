@@ -372,7 +372,30 @@ every phase rather than batched at the end):
       pin below; fixed the same way — pinned `jsdom` to `^26.0.0` in
       `package.json`, which depends on an older `html-encoding-sniffer` that
       predates the `@exodus/bytes` migration.
-- [ ] **Phase 6 — Final docs + screenshots + full-suite pass.**
+- [x] **Phase 6 — Final integrated verification pass.** Docs/screenshots/
+      tests were already kept current phase-by-phase (see above), so this
+      phase was the one check those per-phase passes couldn't cover:
+      everything together, not in isolation. Full-page screenshots (light +
+      dark) confirmed the whole redesigned page reads as one coherent
+      system end to end. A narrow-viewport (390px) pass confirmed the
+      sidebar-to-topbar collapse (built in Phase 2, never actually
+      re-verified since) still works, and caught one thing worth a second
+      look before concluding it was a bug: at a 1000ms wait, the line
+      charts showed dots with no connecting line and the donut looked
+      blank — looked exactly like a broken layout, but a 3000ms wait showed
+      everything rendering correctly. Same Recharts mount-animation gotcha
+      as Phases 1/4, just slower to settle on a fresh narrow-viewport
+      navigation; not a real defect. **One genuine, minor, unfixed rough
+      edge found and left as a known follow-up:** the dark-mode toggle
+      scrolls off-screen in the collapsed mobile nav bar at 390px width —
+      still in the DOM and still found by `getByRole('switch', ...)`, so no
+      test is affected, just not discoverable without scrolling the nav row
+      horizontally. Full suite confirmed clean at the end: 33 unit tests,
+      12 e2e tests, clean build.
+
+All 5 redesign phases plus this verification pass are done. The visual
+redesign that was called out as a deliberately separate, later pass back
+in "Post-v1: expanded data + UI" is now complete.
 
 Full implementation plan (test-migration details, Recharts-vs-hand-rolled
 decisions, milestone rationale) lives at
