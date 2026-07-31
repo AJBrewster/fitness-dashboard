@@ -45,7 +45,13 @@ test('activity type breakdown renders one donut slice and one legend row per typ
 test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
   await page.goto('/');
   await expect(page.getByTestId('training-readiness')).toHaveText('61');
-  await expect(page.getByText('Training Readiness — Good · Maintaining')).toBeVisible();
+  // Training Readiness split from one combined sentence into a heading plus
+  // a separate status chip when it became a ring gauge (visual-redesign
+  // Phase 5) — assert both, via a stable testid on the chip rather than
+  // getByText, since chip copy is more likely to be tweaked later than a
+  // data-testid is to move.
+  await expect(page.getByText('Training readiness')).toBeVisible();
+  await expect(page.getByTestId('readiness-status-chip')).toHaveText('Good · Maintaining');
   await expect(page.getByTestId('sleep-score')).toHaveText('70');
   await expect(page.getByTestId('body-battery')).toHaveText('58');
   await expect(page.getByTestId('stress-level')).toHaveText('26');

@@ -320,7 +320,98 @@
   text-align: left;
 }
 
-.wellness-stats {
+.wellness-rings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.wellness-ring-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  border-radius: 8px;
+}
+
+.wellness-ring-card h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.wellness-ring-copy h3 {
+  margin-top: 0.3rem;
+}
+
+.score-ring {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.score-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-ring-track {
+  fill: none;
+  stroke: rgba(128, 128, 128, 0.25);
+}
+
+.score-ring-value {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.score-ring-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.status-chip::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-chip.status-good {
+  color: var(--status-good);
+  background: color-mix(in srgb, var(--status-good) 15%, transparent);
+}
+
+.status-chip.status-warning {
+  color: var(--status-warning);
+  background: color-mix(in srgb, var(--status-warning) 15%, transparent);
+}
+
+.status-chip.status-serious {
+  color: var(--status-serious);
+  background: color-mix(in srgb, var(--status-serious) 15%, transparent);
+}
+
+.wellness-tiles {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -328,33 +419,15 @@
   margin-top: 1.5rem;
 }
 
-.wellness-stat {
+.wellness-tile {
   display: flex;
   flex-direction: column;
   max-width: 220px;
 }
 
-.wellness-stat-highlight {
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(128, 128, 128, 0.35);
-  border-radius: 8px;
-}
-
 .wellness-value {
   font-size: 1.5rem;
   font-weight: 600;
-}
-
-.wellness-value.status-good {
-  color: var(--status-good);
-}
-
-.wellness-value.status-warning {
-  color: var(--status-warning);
-}
-
-.wellness-value.status-serious {
-  color: var(--status-serious);
 }
 
 .wellness-label {

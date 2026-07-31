@@ -136,6 +136,15 @@ predates `node:util`'s `styleText` export. `vitest@4` (and latest
 issue when Playwright gets added in milestone 6 — check its Node requirement
 before installing, or upgrade Node first.
 
+**Second version gotcha (found 2026-07-31, visual-redesign Phase 5):** same
+root cause, different dependency. `jsdom` had no upper bound and had drifted
+to `29.1.1`; its `html-encoding-sniffer` dependency requires the ESM-only
+`@exodus/bytes` via `require()`, which crashes any Vitest file that needs the
+`jsdom` environment (surfaces as an "Unhandled Error" in the run, not a clean
+per-file failure — still fails the overall run, just easy to misread). Pinned
+`jsdom` to `^26.0.0`, which predates that dependency. Check this again before
+bumping `jsdom`, same as the `vitest`/`styleText` note above.
+
 ## Milestones
 
 Each leaves the repo working and committable. Sessions are ~1–2 hours.
@@ -338,9 +347,31 @@ every phase rather than batched at the end):
       chart-agnostic check. **Found the same mount-animation gotcha
       documented for `<Line>`** — `<Pie>` also sweeps in on mount (~1.5–2s);
       a screenshot taken too early shows a half-open fan, not a bug.
-- [ ] **Phase 5 — Wellness ring gauges.** Planned: hand-rolled SVG ring
-      gauges for Training Readiness (hero)/Sleep Score/Body Battery in
-      `WellnessSummary.jsx`; Avg Stress/Resting HR stay plain tiles.
+- [x] **Phase 5 — Wellness ring gauges.** New reusable `ScoreRing.jsx`
+      (hand-rolled SVG full-circle progress ring — confirmed not a Recharts
+      fit, see the implementation plan), used three times in
+      `WellnessSummary.jsx`: Training Readiness (hero, larger), Sleep Score,
+      Body Battery. `readinessBand()` generalized into a `scoreBand(score,
+      thresholds)` shared across all three (Sleep/Body Battery thresholds
+      are a documented simplification, not an official Garmin scale — only
+      Training Readiness's 60/40 bands match Garmin's own). Avg Stress/
+      Resting HR stay plain tiles, no ring (no natural 0-100 "goal" for
+      either). The old combined sentence ("Training Readiness — Good ·
+      Maintaining") split into a heading + a separate `data-testid=
+      "readiness-status-chip"` pill — updated the smoke test accordingly.
+      **Also added:** 2 `@testing-library/react` unit tests on `ScoreRing`
+      itself (arc math + clamping) — the first real use of
+      `@testing-library/react`/`jsdom`, installed since early milestones but
+      never exercised. Doing so surfaced a real environment gotcha: `jsdom`
+      had drifted to `29.1.1` (no upper bound in `package.json`), whose
+      `html-encoding-sniffer` dependency requires an ESM-only package
+      (`@exodus/bytes`) via `require()`, silently crashing test *collection*
+      for any file needing the `jsdom` environment (Vitest reported it as
+      an "Unhandled Error," not a per-file failure — still fails the run,
+      just confusingly). Same class of issue as the `vitest`/`styleText`
+      pin below; fixed the same way — pinned `jsdom` to `^26.0.0` in
+      `package.json`, which depends on an older `html-encoding-sniffer` that
+      predates the `@exodus/bytes` migration.
 - [ ] **Phase 6 — Final docs + screenshots + full-suite pass.**
 
 Full implementation plan (test-migration details, Recharts-vs-hand-rolled
