@@ -40,12 +40,13 @@ counterparts never ship.
   activity, missing fields) — which lives in pure functions in
   `src/lib/stats.js`, deliberately separated from React components so the
   math is testable without rendering anything.
-- **E2E tests (Playwright, 11 tests)** cover the UI, tagged in two layers:
-  `@smoke` (6 tests — loads, summary renders, weekly chart, activity-type
-  breakdown, wellness summary, trend charts) runs on every push; the full
-  set adds 5 more covering the date-range filter (basic filter + clear, a
-  no-match range, a partial/one-sided range, a single-day range) and runs
-  on demand. Same smoke/regression layering used in production test suites.
+- **E2E tests (Playwright, 12 tests)** cover the UI, tagged in two layers:
+  `@smoke` (7 tests — loads, summary renders, weekly chart, activity-type
+  breakdown, wellness summary, trend charts, disabled "Reports" nav
+  placeholder) runs on every push; the full set adds 5 more covering the
+  date-range filter (basic filter + clear, a no-match range, a
+  partial/one-sided range, a single-day range) and runs on demand. Same
+  smoke/regression layering used in production test suites.
 - **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
   `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
   HTML report as an artifact even on failure. The full Playwright suite

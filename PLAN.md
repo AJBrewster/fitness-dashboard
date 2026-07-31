@@ -265,6 +265,71 @@ pre-existing `.recharts-line-dots circle` assertions in `smoke.spec.js`/
 adding two more line charts (VO2 max, weight) to the page meant the old
 unscoped selector started counting dots from all three charts combined.
 
+## Post-v1: visual redesign (started 2026-07-30)
+
+The data/UI expansion above deliberately used the existing visual style and
+called the full redesign a separate, later pass. That pass is now underway,
+planned phase-by-phase (each phase committable on its own, docs updated with
+every phase rather than batched at the end):
+
+- [x] **Phase 1 — Accent token + chart re-color.** Added `--accent` to
+      `src/index.css` (`#35b8cc` dark / `#0e7c90` light), contrast-checked
+      against this app's real surfaces via the `dataviz` skill's
+      `validate_palette.js` (6.56:1 dark, 4.88:1 light). Swapped the
+      hardcoded `stroke="#646cff"` in `WeeklyDistanceChart.jsx`,
+      `Vo2MaxChart.jsx`, `WeightChart.jsx` to `stroke="var(--accent)"`. No
+      test impact.
+- [x] **Phase 2 — App shell: sidebar + topbar.** New `src/components/
+      Sidebar.jsx` — nav links for Activity/Today's Wellness/Trends
+      (scroll-linked via `IntersectionObserver` in `App.jsx`, active-state
+      highlighted), a deliberately disabled "Reports" item with a "Soon"
+      badge (a real, inert placeholder, not a dead link — signals room to
+      grow without faking a feature), and a working dark-mode toggle
+      persisted to `localStorage`. `App.jsx` now renders an `.app-shell` of
+      sidebar + main (topbar with the active section's title + the
+      relocated `DateRangeFilter`, then the three `<section>`s). The old
+      standalone `<h1>Fitness Dashboard</h1>` moved into the sidebar brand
+      mark — it's still the page's only `<h1>`, just relocated, so the
+      existing smoke test needed no change. Removed the stock Vite
+      `#root`/`body` centering rules (`max-width`/`margin:auto`/
+      `text-align:center`/`display:flex; place-items:center`), which
+      conflicted with the new full-bleed shell. One new `@smoke` test
+      (Reports item visible/disabled/"Soon") — 12 e2e total now, up from
+      11.
+      **Two real bugs found and fixed during this phase, worth remembering:**
+      a CSS comment containing the substring `--status-*/--sidebar-*`
+      literally contained `*/`, silently truncating the stylesheet mid-parse
+      during minification — `npm run build` reported success even though the
+      whole `data-theme` override block vanished from the production
+      output; only caught by grepping the actual built CSS, not by trusting
+      a green build. And the toggle's `aria-label="Toggle dark mode"`
+      collided with Playwright's `getByLabel('To')` (substring match: "**To**
+      ggle"), breaking 4 of 5 `filters.spec.js` tests — renamed to
+      `aria-label="Dark mode"`.
+      **Known open tradeoff, not fixed:** `DateRangeFilter` now sits in a
+      global topbar, which visually implies it filters every section, but it
+      still only filters Activity (Wellness/Trends stay unfiltered), same as
+      before — just more visually implied now. Left as an explicit, later
+      decision rather than silently expanding scope.
+- [ ] **Phase 3 — KPI tiles + weekly sparkline data.** Planned: extract
+      `getWeeklyDistance`'s private week-bucketing into a shared helper, add
+      `getWeeklyDuration`/`getWeeklyActivityCount` to `stats.js` (+ Vitest
+      coverage), restyle `Summary.jsx` into icon + value + sparkline tiles.
+      Streak stays sparkline-free (no natural weekly series without
+      inventing one).
+- [ ] **Phase 4 — Activity-type donut.** Planned: replace
+      `ActivityTypeBreakdown.jsx`'s Recharts `BarChart` with a `Pie`/donut
+      (same `COLOR_BY_TYPE` mapping) + an HTML legend.
+- [ ] **Phase 5 — Wellness ring gauges.** Planned: hand-rolled SVG ring
+      gauges for Training Readiness (hero)/Sleep Score/Body Battery in
+      `WellnessSummary.jsx`; Avg Stress/Resting HR stay plain tiles.
+- [ ] **Phase 6 — Final docs + screenshots + full-suite pass.**
+
+Full implementation plan (test-migration details, Recharts-vs-hand-rolled
+decisions, milestone rationale) lives at
+`/Users/alexbrewster/.claude/plans/transient-kindling-dijkstra.md` if it's
+still around — treat this PLAN.md section as the durable record either way.
+
 ## Known failure modes (watch for these)
 
 1. Fighting Garmin's API before the dashboard exists — was banned until
