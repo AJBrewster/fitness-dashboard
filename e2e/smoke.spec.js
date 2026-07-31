@@ -31,9 +31,15 @@ test('weekly distance chart renders', { tag: '@smoke' }, async ({ page }) => {
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
 });
 
-test('activity type breakdown renders one bar per type', { tag: '@smoke' }, async ({ page }) => {
+test('activity type breakdown renders one donut slice and one legend row per type', { tag: '@smoke' }, async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.chart-activity-types .recharts-bar-rectangle')).toHaveCount(7);
+  // Replaced the bar chart with a Recharts Pie/donut (visual-redesign
+  // Phase 4) — .recharts-pie-sector is Recharts' own per-slice class, same
+  // pattern as .recharts-line-dots/.recharts-bar-rectangle elsewhere in
+  // this suite. The legend rows are a second, chart-implementation-agnostic
+  // assertion covering the same 7 types.
+  await expect(page.locator('.chart-activity-types .recharts-pie-sector')).toHaveCount(7);
+  await expect(page.getByTestId('activity-type-row')).toHaveCount(7);
 });
 
 test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {

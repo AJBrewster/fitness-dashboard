@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LabelList, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Fixed type -> color slot, independent of count/rank. Color must follow the
 // entity, not its position in the (count-sorted) breakdown array — otherwise
@@ -33,20 +33,32 @@ function ActivityTypeBreakdown({ breakdown }) {
   return (
     <div className="chart chart-activity-types">
       <h2>Activity types</h2>
-      <ResponsiveContainer width="100%" height={Math.max(200, data.length * 40)}>
-        <BarChart data={data} layout="vertical" margin={{ left: 24 }}>
-          <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-          <XAxis type="number" allowDecimals={false} />
-          <YAxis type="category" dataKey="label" width={140} />
-          <Tooltip formatter={(value) => [value, 'Activities']} />
-          <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-            {data.map((entry) => (
-              <Cell key={entry.type} fill={COLOR_BY_TYPE[entry.type] ?? 'var(--series-1)'} />
-            ))}
-            <LabelList dataKey="count" position="right" fill="var(--text-secondary)" />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      {/* The donut is aria-hidden: the legend list below is real, accessible
+          HTML carrying the same name+count per type, so the chart itself is
+          a decorative visualization of information already available to a
+          screen reader, not an independent data surface (same reasoning as
+          Sparkline.jsx). */}
+      <div aria-hidden="true">
+        <ResponsiveContainer width="100%" height={260}>
+          <PieChart>
+            <Pie data={data} dataKey="count" nameKey="label" innerRadius={60} outerRadius={95} paddingAngle={2}>
+              {data.map((entry) => (
+                <Cell key={entry.type} fill={COLOR_BY_TYPE[entry.type] ?? 'var(--series-1)'} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value, name) => [value, name]} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <ul className="activity-type-legend">
+        {data.map((entry) => (
+          <li key={entry.type} className="activity-type-row" data-testid="activity-type-row">
+            <span className="legend-dot" style={{ background: COLOR_BY_TYPE[entry.type] ?? 'var(--series-1)' }} />
+            <span className="legend-name">{entry.label}</span>
+            <span className="legend-count">{entry.count}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

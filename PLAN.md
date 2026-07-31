@@ -325,9 +325,19 @@ every phase rather than batched at the end):
       series without inventing one). `data-testid`s stayed on the same leaf
       nodes, so no e2e changes were needed — all 12 e2e tests still pass
       unchanged.
-- [ ] **Phase 4 — Activity-type donut.** Planned: replace
+- [x] **Phase 4 — Activity-type donut.** Replaced
       `ActivityTypeBreakdown.jsx`'s Recharts `BarChart` with a `Pie`/donut
-      (same `COLOR_BY_TYPE` mapping) + an HTML legend.
+      (same `COLOR_BY_TYPE` mapping, verified against the installed
+      `recharts@3.10.0` source that it renders one `.recharts-pie-sector`
+      per slice before committing to this over hand-rolled SVG), plus a real
+      HTML `<ul>` legend (dot + name + count per row, `data-testid=
+      "activity-type-row"`). The `<Pie>` itself is `aria-hidden` since the
+      legend already carries the same info accessibly. Updated the smoke
+      test to assert `.recharts-pie-sector` count = 7 (was
+      `.recharts-bar-rectangle`) plus the legend-row count as a second,
+      chart-agnostic check. **Found the same mount-animation gotcha
+      documented for `<Line>`** — `<Pie>` also sweeps in on mount (~1.5–2s);
+      a screenshot taken too early shows a half-open fan, not a bug.
 - [ ] **Phase 5 — Wellness ring gauges.** Planned: hand-rolled SVG ring
       gauges for Training Readiness (hero)/Sleep Score/Body Battery in
       `WellnessSummary.jsx`; Avg Stress/Resting HR stay plain tiles.
