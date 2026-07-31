@@ -311,12 +311,20 @@ every phase rather than batched at the end):
       still only filters Activity (Wellness/Trends stay unfiltered), same as
       before — just more visually implied now. Left as an explicit, later
       decision rather than silently expanding scope.
-- [ ] **Phase 3 — KPI tiles + weekly sparkline data.** Planned: extract
-      `getWeeklyDistance`'s private week-bucketing into a shared helper, add
-      `getWeeklyDuration`/`getWeeklyActivityCount` to `stats.js` (+ Vitest
-      coverage), restyle `Summary.jsx` into icon + value + sparkline tiles.
-      Streak stays sparkline-free (no natural weekly series without
-      inventing one).
+- [x] **Phase 3 — KPI tiles + weekly sparkline data.** Extracted
+      `getWeeklyDistance`'s private week-bucketing into a shared `groupByWeek`
+      helper; `getWeeklyDuration`/`getWeeklyActivityCount` in `stats.js` are
+      thin reducers over the same groups (+ 10 new Vitest cases: happy path,
+      empty, single-activity, Sunday-bucketing, missing-field-as-zero per
+      function, plus one consistency test asserting all three bucket into
+      identical `weekStart` keys — 31 unit tests total, up from 21). New
+      `src/components/Sparkline.jsx` (small hand-rolled SVG trend line,
+      `aria-hidden` since the tile's own text value already carries the
+      number). `Summary.jsx` restyled into bordered icon + value + sparkline
+      tiles; streak stays sparkline-free as planned (no natural weekly
+      series without inventing one). `data-testid`s stayed on the same leaf
+      nodes, so no e2e changes were needed — all 12 e2e tests still pass
+      unchanged.
 - [ ] **Phase 4 — Activity-type donut.** Planned: replace
       `ActivityTypeBreakdown.jsx`'s Recharts `BarChart` with a `Pie`/donut
       (same `COLOR_BY_TYPE` mapping) + an HTML legend.

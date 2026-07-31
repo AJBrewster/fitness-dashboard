@@ -47,16 +47,45 @@ function getWeekStart(startTime) {
   return date.toISOString().slice(0, 10); // 'YYYY-MM-DD'
 }
 
-export function getWeeklyDistance(activities) {
-  const distanceByWeek = new Map();
+// Shared bucketing step behind getWeeklyDistance/getWeeklyDuration/
+// getWeeklyActivityCount — each just reduces a different field over the
+// same Monday-keyed groups, sorted the same way.
+function groupByWeek(activities) {
+  const byWeek = new Map();
   for (const activity of activities) {
     const weekStart = getWeekStart(activity.startTime);
-    const current = distanceByWeek.get(weekStart) ?? 0;
-    distanceByWeek.set(weekStart, current + (activity.distanceMeters ?? 0));
+    if (!byWeek.has(weekStart)) byWeek.set(weekStart, []);
+    byWeek.get(weekStart).push(activity);
   }
+  return byWeek;
+}
 
-  return Array.from(distanceByWeek, ([weekStart, distanceMeters]) => ({ weekStart, distanceMeters }))
-    .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+function sortedWeekStarts(byWeek) {
+  return [...byWeek.keys()].sort((a, b) => a.localeCompare(b));
+}
+
+export function getWeeklyDistance(activities) {
+  const byWeek = groupByWeek(activities);
+  return sortedWeekStarts(byWeek).map((weekStart) => ({
+    weekStart,
+    distanceMeters: byWeek.get(weekStart).reduce((sum, a) => sum + (a.distanceMeters ?? 0), 0),
+  }));
+}
+
+export function getWeeklyDuration(activities) {
+  const byWeek = groupByWeek(activities);
+  return sortedWeekStarts(byWeek).map((weekStart) => ({
+    weekStart,
+    durationSeconds: byWeek.get(weekStart).reduce((sum, a) => sum + (a.durationSeconds ?? 0), 0),
+  }));
+}
+
+export function getWeeklyActivityCount(activities) {
+  const byWeek = groupByWeek(activities);
+  return sortedWeekStarts(byWeek).map((weekStart) => ({
+    weekStart,
+    count: byWeek.get(weekStart).length,
+  }));
 }
 
 export function filterByType(activities, type) {

@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getActivities, getWellness, getVo2MaxTrend, getWeighIns } from './lib/data';
-import { getTotals, getWeeklyDistance, filterByDateRange, getActivityTypeBreakdown } from './lib/stats';
+import {
+  getTotals,
+  getWeeklyDistance,
+  getWeeklyDuration,
+  getWeeklyActivityCount,
+  filterByDateRange,
+  getActivityTypeBreakdown,
+} from './lib/stats';
 import Summary from './components/Summary';
 import WeeklyDistanceChart from './components/WeeklyDistanceChart';
 import DateRangeFilter from './components/DateRangeFilter';
@@ -70,6 +77,8 @@ function App() {
     start && end ? filterByDateRange(activities, start, `${end}T23:59:59`) : activities;
   const totals = getTotals(filteredActivities);
   const weeklyDistance = getWeeklyDistance(filteredActivities);
+  const weeklyDuration = getWeeklyDuration(filteredActivities);
+  const weeklyActivityCount = getWeeklyActivityCount(filteredActivities);
   const typeBreakdown = getActivityTypeBreakdown(filteredActivities);
   const latestWellness = wellness[wellness.length - 1];
   const topbarTitle = SECTIONS.find((section) => section.id === activeSection)?.label;
@@ -92,7 +101,12 @@ function App() {
         <div className="content">
           <section id="section-activity" className="page-section">
             <h2 className="section-title">Activity</h2>
-            <Summary totals={totals} />
+            <Summary
+              totals={totals}
+              weeklyDistance={weeklyDistance}
+              weeklyDuration={weeklyDuration}
+              weeklyActivityCount={weeklyActivityCount}
+            />
             <WeeklyDistanceChart weeklyDistance={weeklyDistance} />
             <ActivityTypeBreakdown breakdown={typeBreakdown} />
           </section>

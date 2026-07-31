@@ -34,12 +34,13 @@ counterparts never ship.
 
 ## Testing approach
 
-- **Unit tests (Vitest, 21 tests)** cover the calculation logic — totals,
-  weekly rollups, filters, streak (longest run of consecutive days with an
-  activity), activity-type breakdown, and edge cases (empty data, a single
-  activity, missing fields) — which lives in pure functions in
-  `src/lib/stats.js`, deliberately separated from React components so the
-  math is testable without rendering anything.
+- **Unit tests (Vitest, 31 tests)** cover the calculation logic — totals,
+  weekly rollups (distance, duration, activity count), filters, streak
+  (longest run of consecutive days with an activity), activity-type
+  breakdown, and edge cases (empty data, a single activity, missing fields)
+  — which lives in pure functions in `src/lib/stats.js`, deliberately
+  separated from React components so the math is testable without rendering
+  anything.
 - **E2E tests (Playwright, 12 tests)** cover the UI, tagged in two layers:
   `@smoke` (7 tests — loads, summary renders, weekly chart, activity-type
   breakdown, wellness summary, trend charts, disabled "Reports" nav
