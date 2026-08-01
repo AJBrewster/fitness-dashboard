@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alexbrewster.fitness-dashboard-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/alexbrewster/.local/bin/uv</string>
+        <string>run</string>
+        <string>--script</string>
+        <string>/Users/alexbrewster/code/fitness-dashboard/scripts/sync_garmin.py</string>
+    </array>
+
+    <!-- Once daily at 7am. launchd (unlike plain cron) catches up on a run
+         that was missed while the machine was asleep, and sync_garmin.py's
+         own trailing-window upsert means a skipped day backfills cleanly
+         on the next run either way. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- sync_garmin.py already logs to scripts/sync.log itself; these only
+         catch a failure before Python's own logging is set up (e.g. uv
+         failing to resolve the script's dependencies). -->
+    <key>StandardOutPath</key>
+    <string>/Users/alexbrewster/code/fitness-dashboard/scripts/launchd.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/alexbrewster/code/fitness-dashboard/scripts/launchd.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

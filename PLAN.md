@@ -117,11 +117,13 @@ multi-user.
      max/body battery/weigh-ins succeeded right after. If `garmin` tools
      ever go missing again: check `claude mcp get garmin` (which repo/path
      it's using) *before* assuming it's a `~/garmin_mcp` staleness issue.
-5. **Long-term (post-v1, tracked, not decided):** a flat JSON fixture won't
-   scale past v1 if this becomes a real ongoing tool — a DB (even SQLite)
-   is the likely next step once live sync is in play. Out of scope for v1;
-   revisit alongside the "Post-v1" live-sync item above rather than as its
-   own separate effort.
+5. **Decided 2026-08-01: local SQLite store + scheduled sync.** Stays a
+   local-only tool — nothing gets deployed, the public repo keeps shipping
+   the small synthetic fixture exactly as before, and real data never
+   leaves Alex's laptop. SQLite over a hosted DB: no account, no cost, no
+   network dependency, trivial to gitignore, and a natural fit for a
+   local-only tool. See "Post-v1: local sync + SQLite" below for the full
+   architecture and how it replaces the old one-time manual snapshot.
 
 ## Stack
 
@@ -401,6 +403,74 @@ Full implementation plan (test-migration details, Recharts-vs-hand-rolled
 decisions, milestone rationale) lives at
 `/Users/alexbrewster/.claude/plans/transient-kindling-dijkstra.md` if it's
 still around — treat this PLAN.md section as the durable record either way.
+
+## Post-v1: local sync + SQLite (2026-08-01)
+
+Replaces the old one-time, hand-triggered snapshot (`*.local.json` pulled ad
+hoc through the `garmin` MCP server and manually swapped into `lib/data.js`)
+with a scheduled sync that keeps real data current on its own. **Stays a
+local-only tool** — no deployment, no hosted DB, the public repo's shipped
+fixture is unaffected (see Data strategy §5 above for the decision).
+
+**Why a DB at all, if the app still just reads JSON:** the browser can't
+open a SQLite file directly, and this is a static Vite SPA with no backend
+— so SQLite was never going to be something the running dashboard queries
+live. Instead:
+
+1. `scripts/sync_garmin.py` — a self-contained `uv run` script (PEP 723
+   inline dependency metadata: `garminconnect`, no `pyproject.toml`/venv
+   setup needed) pulls a trailing window from Garmin (14 days of
+   activities/wellness, 90 days of VO2 max/weigh-ins — wider than the sync
+   interval on purpose, so a missed run just backfills next time) and
+   **upserts** it into `scripts/garmin.local.db` by natural key (activity
+   id, calendar date). This is the durable, cumulative store — history
+   keeps growing across runs instead of each pull overwriting the last one,
+   which was the old snapshot's real limitation.
+2. The same script then **materializes** the full accumulated view straight
+   back out to `src/data/*.local.json` — identical field names/shapes to
+   the committed synthetic fixtures, so `lib/data.js` needs no knowledge
+   that a DB exists at all.
+3. Reuses the existing `~/.garminconnect` OAuth token cache (same one the
+   `garmin` MCP server uses) — no new credential storage. Applies the same
+   privacy pass already established for the original one-time snapshot
+   (real place/route names dropped; only a small allow-list of generic
+   workout descriptors like "Tempo"/"Easy"/"Speed Repeats" survives into the
+   activity name), just automated now instead of manual.
+4. Scheduled via macOS **launchd**, not cron — `scripts/launchd/
+   com.alexbrewster.fitness-dashboard-sync.plist` (install/uninstall/status
+   commands in `scripts/launchd/README.md`). launchd catches up on a run
+   missed while the machine was asleep, which plain cron doesn't; combined
+   with the trailing-window upsert, a skipped day is a non-event.
+5. `lib/data.js`'s four fixture imports were replaced with a small
+   `import.meta.glob('../data/*.local.json', { eager: true })` lookup, gated
+   behind `VITE_USE_LOCAL_DATA=true` (default off) rather than switching
+   purely on file presence. Presence-based was the original design — it
+   removes the old "don't commit that change" foot-gun (no hand-edited
+   import path) — but it doesn't compose with a *scheduled* sync: launchd
+   can write fresh `.local.json` files in the background any time, so
+   `npm run test:e2e`/`test:e2e:smoke` would silently start rendering real
+   Garmin data and fail the fixture-pinned assertions in `e2e/smoke.spec.js`
+   for reasons unrelated to any code change. **Caught the hard way** —
+   verification when this landed only checked `npm test`/`npm run build`
+   (both stayed green, since no unit test imports `lib/data.js` directly);
+   a follow-up e2e run the same day, with that day's scheduled sync having
+   already dropped `.local.json` files on disk, failed 5 of 7 smoke tests.
+   Fixed same day by requiring the explicit env var — `.local.json`
+   presence alone no longer changes what the app or its tests render.
+
+**Not done as part of this pass, deliberately:** no `lib/data.js` unit test
+was added for the glob fallback itself (verified manually instead, see
+above) — the four `get*()` functions are still trivially thin, and the
+interesting logic (upsert idempotency, the privacy pass) lives in
+`scripts/sync_garmin.py`, which is Python and outside this repo's Vitest/
+Playwright suites by design. Also not addressed: `import.meta.glob(...,
+{ eager: true })` bundles whatever `.local.json` files exist at *build*
+time regardless of the `VITE_USE_LOCAL_DATA` flag — the flag only gates
+which data `pick()` returns at runtime. Not a problem today (this app isn't
+deployed anywhere; `dist/` never leaves this machine), but worth knowing
+before ever adding a deploy step: a `npm run build` run locally with
+`.local.json` files present would ship real data in the JS bundle even with
+the flag unset.
 
 ## Known failure modes (watch for these)
 

@@ -15,3 +15,8 @@ src/data/activities.local.json
 src/data/wellness.local.json
 src/data/vo2MaxTrend.local.json
 src/data/weighIns.local.json
+
+# cumulative local SQLite store the sync script upserts into — see
+# scripts/sync_garmin.py. Real Garmin data, never committed.
+scripts/*.local.db
+scripts/*.log
