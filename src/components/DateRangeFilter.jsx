@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function DateRangeFilter({ start, end, onStartChange, onEndChange }) {
   return (
     <div className="date-range-filter">
@@ -12,5 +14,12 @@ function DateRangeFilter({ start, end, onStartChange, onEndChange }) {
     </div>
   );
 }
+
+DateRangeFilter.propTypes = {
+  start: PropTypes.string.isRequired,
+  end: PropTypes.string.isRequired,
+  onStartChange: PropTypes.func.isRequired,
+  onEndChange: PropTypes.func.isRequired,
+};
 
 export default DateRangeFilter;

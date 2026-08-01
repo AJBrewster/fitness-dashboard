@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 function WeightChart({ weighIns }) {
@@ -16,5 +17,14 @@ function WeightChart({ weighIns }) {
     </div>
   );
 }
+
+WeightChart.propTypes = {
+  weighIns: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      weightKg: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+};
 
 export default WeightChart;

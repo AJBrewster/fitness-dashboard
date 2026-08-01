@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // Full-circle progress ring for a bounded 0-100 score (Training Readiness,
 // Sleep Score, Body Battery) — only used where a ring's "how full" framing
 // is actually meaningful. Purely presentational: the caller resolves the
@@ -29,5 +31,14 @@ function ScoreRing({ score, max = 100, colorVar, size = 84, strokeWidth = 9, tes
     </div>
   );
 }
+
+ScoreRing.propTypes = {
+  score: PropTypes.number.isRequired,
+  max: PropTypes.number,
+  colorVar: PropTypes.string.isRequired,
+  size: PropTypes.number,
+  strokeWidth: PropTypes.number,
+  testId: PropTypes.string.isRequired,
+};
 
 export default ScoreRing;

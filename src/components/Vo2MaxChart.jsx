@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 function Vo2MaxChart({ vo2MaxTrend }) {
@@ -16,5 +17,14 @@ function Vo2MaxChart({ vo2MaxTrend }) {
     </div>
   );
 }
+
+Vo2MaxChart.propTypes = {
+  vo2MaxTrend: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      vo2Max: PropTypes.number,
+    }),
+  ).isRequired,
+};
 
 export default Vo2MaxChart;

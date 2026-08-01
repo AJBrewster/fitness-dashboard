@@ -35,4 +35,13 @@ export default [
       ],
     },
   },
+  {
+    // Config files run under Node during `vite`/`playwright test`'s own
+    // startup, not in the browser — they need `process`/`__dirname`, which
+    // `globals.browser` above doesn't provide.
+    files: ['*.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ]

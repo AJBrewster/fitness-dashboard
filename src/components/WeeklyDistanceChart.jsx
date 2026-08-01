@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 function WeeklyDistanceChart({ weeklyDistance }) {
@@ -21,5 +22,14 @@ function WeeklyDistanceChart({ weeklyDistance }) {
     </div>
   );
 }
+
+WeeklyDistanceChart.propTypes = {
+  weeklyDistance: PropTypes.arrayOf(
+    PropTypes.shape({
+      weekStart: PropTypes.string.isRequired,
+      distanceMeters: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+};
 
 export default WeeklyDistanceChart;

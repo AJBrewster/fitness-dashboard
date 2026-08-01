@@ -112,7 +112,7 @@ function App() {
           </section>
 
           <section id="section-wellness" className="page-section">
-            <h2 className="section-title">Today's Wellness</h2>
+            <h2 className="section-title">Today&apos;s Wellness</h2>
             <WellnessSummary latest={latestWellness} />
           </section>
 

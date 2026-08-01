@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import Sparkline from './Sparkline';
 
 function formatDistance(meters) {
@@ -75,5 +76,32 @@ function Summary({ totals, weeklyDistance, weeklyDuration, weeklyActivityCount }
     </section>
   );
 }
+
+Summary.propTypes = {
+  totals: PropTypes.shape({
+    totalDistanceMeters: PropTypes.number.isRequired,
+    totalDurationSeconds: PropTypes.number.isRequired,
+    activityCount: PropTypes.number.isRequired,
+    streak: PropTypes.number.isRequired,
+  }).isRequired,
+  weeklyDistance: PropTypes.arrayOf(
+    PropTypes.shape({
+      weekStart: PropTypes.string.isRequired,
+      distanceMeters: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+  weeklyDuration: PropTypes.arrayOf(
+    PropTypes.shape({
+      weekStart: PropTypes.string.isRequired,
+      durationSeconds: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+  weeklyActivityCount: PropTypes.arrayOf(
+    PropTypes.shape({
+      weekStart: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+};
 
 export default Summary;

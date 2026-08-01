@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Fixed type -> color slot, independent of count/rank. Color must follow the
@@ -62,5 +63,14 @@ function ActivityTypeBreakdown({ breakdown }) {
     </div>
   );
 }
+
+ActivityTypeBreakdown.propTypes = {
+  breakdown: PropTypes.arrayOf(
+    PropTypes.shape({
+      type: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+};
 
 export default ActivityTypeBreakdown;

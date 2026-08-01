@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 const SECTIONS = [
   { id: 'section-activity', label: 'Activity' },
   { id: 'section-wellness', label: "Today's Wellness" },
@@ -52,6 +54,13 @@ function Sidebar({ activeSection, onNavigate, theme, onToggleTheme }) {
     </aside>
   );
 }
+
+Sidebar.propTypes = {
+  activeSection: PropTypes.string.isRequired,
+  onNavigate: PropTypes.func.isRequired,
+  theme: PropTypes.oneOf(['light', 'dark']).isRequired,
+  onToggleTheme: PropTypes.func.isRequired,
+};
 
 export default Sidebar;
 export { SECTIONS };

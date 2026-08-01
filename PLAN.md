@@ -147,6 +147,20 @@ per-file failure — still fails the overall run, just easy to misread). Pinned
 `jsdom` to `^26.0.0`, which predates that dependency. Check this again before
 bumping `jsdom`, same as the `vitest`/`styleText` note above.
 
+**Lint gap (found and fixed 2026-08-01):** `npm run lint` had never been part
+of `.github/workflows/ci.yml` (added in milestone 4 alongside `npm test`/
+`npm run build`, but lint itself wasn't), and `eslint-plugin-react`'s
+`react/prop-types` rule had been enabled since milestone 1 with no component
+ever declaring PropTypes — so the repo had been lint-failing its entire
+history (45 errors) without CI or anyone locally noticing. Fixed by adding
+`prop-types` as a real dependency and PropTypes to the 10 components that
+needed them, fixing two smaller pre-existing errors that surfaced once the
+prop-types noise cleared (`process` undefined in `playwright.config.js` —
+config files run under Node, not the browser, needing a `globals.node`
+override in `eslint.config.js` — and an unescaped apostrophe in `App.jsx`'s
+"Today's Wellness" heading), and adding `npm run lint` to CI right after
+`npm ci` so a green run now actually means lint-clean, not just configured.
+
 ## Milestones
 
 Each leaves the repo working and committable. Sessions are ~1–2 hours.

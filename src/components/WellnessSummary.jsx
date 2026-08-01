@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import ScoreRing from './ScoreRing';
 
 // Training status labels are Garmin enums like "PRODUCTIVE_6" / "RECOVERY_2" —
@@ -104,5 +105,17 @@ function WellnessSummary({ latest }) {
     </section>
   );
 }
+
+WellnessSummary.propTypes = {
+  latest: PropTypes.shape({
+    date: PropTypes.string.isRequired,
+    sleepScore: PropTypes.number.isRequired,
+    restingHeartRateBpm: PropTypes.number.isRequired,
+    avgStressLevel: PropTypes.number.isRequired,
+    bodyBatteryCharged: PropTypes.number.isRequired,
+    trainingReadinessScore: PropTypes.number.isRequired,
+    trainingStatus: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 export default WellnessSummary;

@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // Small inline trend line for a KPI tile. Decorative alongside the tile's
 // own text value (which already carries the number a screen reader needs),
 // so it's aria-hidden rather than needing its own accessible description.
@@ -27,5 +29,9 @@ function Sparkline({ values }) {
     </svg>
   );
 }
+
+Sparkline.propTypes = {
+  values: PropTypes.arrayOf(PropTypes.number).isRequired,
+};
 
 export default Sparkline;
