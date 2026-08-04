@@ -24,13 +24,15 @@ the tests.
 
 The committed fixture is a small set of synthetic activities, not real
 Garmin data — kept that way so the repo is safe to publish and runs
-identically for anyone who clones it. (A real, one-time Garmin data snapshot
-exists locally for development but is gitignored and never shipped — see
-`PLAN.md`'s Data strategy if you're curious about the full reasoning.) The
-wellness, VO2 max, and weight data follow the identical pattern —
-`src/data/wellness.json`, `vo2MaxTrend.json`, and `weighIns.json` are the
-small committed synthetic samples; their real, gitignored `.local.json`
-counterparts never ship.
+identically for anyone who clones it. (A real Garmin data snapshot is kept
+locally for development, synced daily in the background via a scheduled
+script — see `scripts/launchd/README.md` — but it's gitignored, never
+shipped, and only rendered when `VITE_USE_LOCAL_DATA=true` is set
+explicitly; see `PLAN.md`'s Data strategy if you're curious about the full
+reasoning.) The wellness, VO2 max, and weight data follow the identical
+pattern — `src/data/wellness.json`, `vo2MaxTrend.json`, and `weighIns.json`
+are the small committed synthetic samples; their real, gitignored
+`.local.json` counterparts never ship.
 
 ## Testing approach
 
@@ -57,6 +59,7 @@ counterparts never ship.
 ```bash
 npm install
 npm run dev             # dashboard at localhost:5173
+VITE_USE_LOCAL_DATA=true npm run dev  # preview real synced Garmin data instead of the fixture
 npm test                # unit tests (Vitest)
 npm run test:e2e:smoke  # Playwright @smoke tests (what CI runs)
 npm run test:e2e        # full Playwright suite
