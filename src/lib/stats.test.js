@@ -7,6 +7,7 @@ import {
   filterByType,
   filterByDateRange,
   getActivityTypeBreakdown,
+  getCurrentWeekRange,
 } from './stats.js';
 
 describe('getTotals', () => {
@@ -265,5 +266,35 @@ describe('filterByDateRange', () => {
   it('returns an empty array when nothing falls in range', () => {
     const result = filterByDateRange(activities, '2026-01-01', '2026-01-31');
     expect(result).toEqual([]);
+  });
+});
+
+describe('getCurrentWeekRange', () => {
+  it('returns Monday..Sunday for a mid-week reference date', () => {
+    expect(getCurrentWeekRange(new Date('2026-06-10T12:00:00'))).toEqual({
+      start: '2026-06-08',
+      end: '2026-06-14',
+    });
+  });
+
+  it('treats a Monday reference date as the start of its own week', () => {
+    expect(getCurrentWeekRange(new Date('2026-06-08T09:00:00'))).toEqual({
+      start: '2026-06-08',
+      end: '2026-06-14',
+    });
+  });
+
+  it('treats a Sunday reference date as the end of its own week', () => {
+    expect(getCurrentWeekRange(new Date('2026-06-14T21:00:00'))).toEqual({
+      start: '2026-06-08',
+      end: '2026-06-14',
+    });
+  });
+
+  it('spans a year boundary correctly', () => {
+    expect(getCurrentWeekRange(new Date('2026-01-01T12:00:00'))).toEqual({
+      start: '2025-12-29',
+      end: '2026-01-04',
+    });
   });
 });
