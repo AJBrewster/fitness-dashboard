@@ -49,10 +49,11 @@ are the small committed synthetic samples; their real, gitignored
   date-range filter (basic filter + clear, a no-match range, a
   partial/one-sided range, a single-day range) and runs on demand. Same
   smoke/regression layering used in production test suites.
-- **CI (GitHub Actions)** runs unit tests, the build, and the Playwright
-  `@smoke` set on every push (`.github/workflows/ci.yml`), uploading the
-  HTML report as an artifact even on failure. The full Playwright suite
-  runs on demand only, by design — not part of the push gate.
+- **CI (GitHub Actions)** runs lint, unit tests, the build, and the
+  Playwright `@smoke` set on every push (`.github/workflows/ci.yml`),
+  uploading the HTML report as an artifact even on failure. The full
+  Playwright suite runs on demand only, by design — not part of the push
+  gate.
 
 ## Running locally
 

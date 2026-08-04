@@ -4,13 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-**All 8 v1 milestones are done** (see `PLAN.md` for the full history). Two Definition-of-Done items remain genuinely open, not coding tasks: whether the synthetic committed fixture satisfies "renders real Garmin data," and the LinkedIn link (Alex's own task).
+**v1 shipped, plus three post-v1 passes: expanded wellness/trends data, a full visual redesign (sidebar/topbar shell, ring gauges, KPI sparklines, activity-type donut), and a local SQLite store with scheduled Garmin sync.** All of it is done and currently green (tests/lint/build/CI). `PLAN.md` was trimmed 2026-08-04 to current state + what's next — the phase-by-phase build history for all of the above lives in git log, not in PLAN.md anymore. See Architecture below for the fixtures, functions, and components as they exist today.
 
-**Now in a post-v1 phase (started 2026-07-29, UI added 2026-07-30): sleep score, activity-type breakdown, heart rate, VO2 max, body battery, weight, stress, and training readiness/status** are wired into `lib/data.js`/`stats.js` *and* now on screen — three page sections (Activity / Today's Wellness / Trends). See Architecture below for the fixtures, functions, and components.
+**The sync schedule (`scripts/sync_garmin.py` via macOS launchd) is now actually loaded** (as of 2026-08-04 — it existed as code before that but wasn't installed, so nothing had synced on a real schedule). Check `launchctl list | grep fitness-dashboard-sync` / `scripts/sync.log` if it seems stale.
 
-**The full visual redesign called out above as a separate later pass is now done (2026-07-30 – 2026-07-31, see `PLAN.md`'s "Post-v1: visual redesign" section for the full phase-by-phase log).** Sidebar/topbar app shell, `--accent`-token chart re-coloring, icon+sparkline KPI tiles, an activity-type donut, and wellness ring gauges (Training Readiness/Sleep Score/Body Battery) all shipped. One known, minor, unfixed rough edge: the dark-mode toggle scrolls off-screen in the collapsed mobile nav bar at narrow (~390px) widths — still functional and still found by tests, just not discoverable without scrolling that row horizontally.
-
-**Real data now syncs on a schedule instead of a one-time manual pull (added 2026-08-01, local-only — see `PLAN.md`'s "Post-v1: local sync + SQLite").** `scripts/sync_garmin.py` upserts into a local SQLite file and materializes the result to `src/data/*.local.json`; `lib/data.js` picks those up only when `VITE_USE_LOCAL_DATA=true` is set explicitly, not merely by file presence (see Architecture below for why). Nothing about the shipped app or its tests changed — this only replaces how the gitignored `.local.json` files get populated.
+Two known, non-blocking items: the dark-mode toggle scrolls off-screen in the collapsed mobile nav at ~390px width (still functional, still tested); and two Definition-of-Done items in `PLAN.md` remain open as product decisions, not coding tasks (does local-only real data satisfy "renders real Garmin data," and the LinkedIn link).
 
 ```bash
 npm install
@@ -21,7 +19,7 @@ npm run test:e2e         # full Playwright suite
 npm run test:e2e:smoke   # just the @smoke-tagged tests (what CI runs)
 ```
 
-Check milestone checkboxes in `PLAN.md` to see what's actually built before assuming a command exists.
+Check `PLAN.md`'s Scope and Definition-of-done sections to see what's actually built before assuming a command exists.
 
 ## Working agreement (read this before writing code)
 
@@ -43,7 +41,7 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - `src/data/vo2MaxTrend.json` / `.local.json` — added 2026-07-29. Sparser, longer-range VO2 max trend (real: 8 points spanning 2026-05-01..2026-07-21) — deliberately separate from `wellness.json`'s daily `vo2Max` field, since VO2 max updates gradually and a multi-month view is the more meaningful one; this endpoint does take a date range directly.
 - `src/data/weighIns.json` / `.local.json` — added 2026-07-29. Date + weight in kg; real data has 25 measurements. Also takes a date range directly.
 - `src/lib/data.js` — the *only* module allowed to read any fixture. Components never import a fixture JSON file directly. `getActivities()`/`getWellness()`/`getVo2MaxTrend()`/`getWeighIns()` all follow the same shape. **Updated 2026-08-01:** each function can source from a dataset's `.local.json` file via `import.meta.glob('../data/*.local.json', { eager: true })` instead of the committed synthetic fixture — but only when `VITE_USE_LOCAL_DATA=true` is set (`VITE_USE_LOCAL_DATA=true npm run dev` to preview real data). **Deliberately not presence-based**, despite that being the original design: `scripts/sync_garmin.py` runs on a launchd schedule, so `.local.json` files can appear in the background without the dev running the sync themselves that session — presence-based switching meant `npm run test:e2e`/`test:e2e:smoke` silently rendered real Garmin data and failed the fixture-pinned assertions in `e2e/smoke.spec.js` the moment a scheduled sync landed, for reasons unrelated to any code change (caught and fixed 2026-08-01). `import.meta.glob` still resolves whatever `.local.json` files exist at build time regardless of the flag, so a fresh clone/CI with none present still builds cleanly either way.
-- `scripts/sync_garmin.py` — added 2026-08-01, self-contained `uv run` script (PEP 723 inline deps: `garminconnect`, no separate venv/`pyproject.toml`). Pulls a trailing window from Garmin (14 days activities/wellness, 90 days VO2 max/weigh-ins), upserts into `scripts/garmin.local.db` (SQLite, gitignored) by natural key, then materializes the accumulated view back out to `src/data/*.local.json`. Reuses the same `~/.garminconnect` token cache as the `garmin` MCP server — no new credentials. Scheduled daily via macOS launchd (`scripts/launchd/`, not committed to run automatically — install is a manual, opt-in step, see that directory's README). This is local-only tooling; it never runs in CI and the app never talks to SQLite directly. Full rationale in `PLAN.md`'s "Post-v1: local sync + SQLite".
+- `scripts/sync_garmin.py` — added 2026-08-01, self-contained `uv run` script (PEP 723 inline deps: `garminconnect`, no separate venv/`pyproject.toml`). Pulls a trailing window from Garmin (14 days activities/wellness, 90 days VO2 max/weigh-ins), upserts into `scripts/garmin.local.db` (SQLite, gitignored) by natural key, then materializes the accumulated view back out to `src/data/*.local.json`. Reuses the same `~/.garminconnect` token cache as the `garmin` MCP server — no new credentials. Scheduled daily at 7am via macOS launchd — **loaded and active as of 2026-08-04** (`~/Library/LaunchAgents/com.alexbrewster.fitness-dashboard-sync.plist`, installed from `scripts/launchd/`; see that directory's README for status/uninstall commands). This is local-only tooling; it never runs in CI and the app never talks to SQLite directly.
 - `src/lib/stats.js` — pure functions only (totals, weekly rollup, filters), deliberately separate from React components so the math is testable without rendering anything.
   - `getTotals`'s `streak` field is the **longest run of consecutive calendar days with an activity in the given list** — not "current streak as of today." A "today"-relative streak would make assertions against the static fixture depend on the system clock, breaking the project's deterministic-testing design. Computed via a private `getDateKey`/`getStreak` pair (same file-private-helper pattern as `getWeekStart`); `getDateKey` uses local `getFullYear`/`getMonth`/`getDate` rather than `toISOString()`, deliberately avoiding the UTC day-shift risk that method carries in timezones ahead of UTC (see `getWeekStart`, which does use `toISOString()` — not fixed, since it works for the existing tests, but don't copy that pattern into new code).
   - `getActivityTypeBreakdown(activities)` — added 2026-07-29. Counts per activity `type`, sorted most-common-first. No new fixture needed — every activity already has a `type` field. Feeds `ActivityTypeBreakdown.jsx`.
@@ -69,13 +67,19 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
   - **Gotcha found here (now fixed via `data-testid`, see `Summary.jsx` above):** don't assert summary numbers via a page-wide `page.getByText(...)`. A filtered value can coincidentally match text Recharts renders elsewhere in the SVG (axis ticks, tooltip markup) and trip Playwright's strict-mode "multiple elements" error — hit this for real with "3.2 km" matching both the summary and a chart `<tspan>`. Also don't use positional selectors (`.summary-value.last()`) for the same reason `data-testid` was added — see the `streak`-as-4th-stat note above.
 - `vite.config.js`'s `test.exclude` includes `e2e/**` — without it, Vitest's default glob picks up Playwright's `.spec.js` files and fails trying to run them with the wrong `test()`/`expect()` API. Found the hard way; keep this if either test file naming convention changes.
 
-## Scope discipline (v1)
+## Scope discipline
 
-In scope: load fixture data, summary stats (distance/time/count/streak), one weekly-distance chart (Recharts), one filter (activity type or date range).
+v1 (fixture data, summary/chart/filter) and all three post-v1 passes
+(expanded wellness/trends data, visual redesign, local sync + SQLite) are
+done — see `PLAN.md`'s Scope section for the current summary. **Still
+explicitly out of scope, on purpose:** auth, multi-user, deployment. Don't
+add these speculatively even if asked to "improve" the project — see
+`PLAN.md`'s "What's next" for the actual current priorities and "Known
+failure modes" for why not to self-assign new scope.
 
-Explicitly out of scope until v1 ships: auth, database, deployment, mobile, live Garmin sync, multi-user. Don't add these even if asked to "improve" the project — they're deferred on purpose (see "Known failure modes" in `PLAN.md`).
-
-v1 is done; the post-v1 data/UI expansion (see `PLAN.md`'s "Post-v1: expanded data + UI" section) shipped in the *existing* visual style on purpose, and the full visual redesign deferred from that phase (see `PLAN.md`'s "Post-v1: visual redesign" section) is now complete. Any further layout/color/typography changes from here are new scope, not a continuation of an already-approved plan — treat them the same as any other deliberate redesign ask, not as an assumed extension of what's already shipped.
+Any layout/color/typography change from here is new scope, not a
+continuation of an already-approved redesign — treat it like any other
+deliberate ask, not an assumed extension of what's already shipped.
 
 ## Test strategy
 
