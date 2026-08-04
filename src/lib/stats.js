@@ -111,3 +111,24 @@ export function filterByDateRange(activities, start, end) {
     return activityTime >= startTime && activityTime <= endTime;
   });
 }
+
+// Monday-start 'YYYY-MM-DD' bounds for the week containing `referenceDate`
+// (defaults to now) — feeds DateRangeFilter's "This week" preset. Shares
+// Monday-as-week-start with getWeekStart, but uses getDateKey's local-date
+// math instead of toISOString(), avoiding the UTC day-shift risk that
+// getWeekStart still carries (see its comment — not fixed there since it
+// works for the existing fixture-pinned tests, but don't copy it into new
+// code). Takes an explicit referenceDate so callers can unit test it
+// deterministically instead of depending on the system clock.
+export function getCurrentWeekRange(referenceDate = new Date()) {
+  const dayOfWeek = referenceDate.getDay();
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+  const monday = new Date(referenceDate);
+  monday.setDate(monday.getDate() - daysSinceMonday);
+
+  const sunday = new Date(monday);
+  sunday.setDate(sunday.getDate() + 6);
+
+  return { start: getDateKey(monday), end: getDateKey(sunday) };
+}

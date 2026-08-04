@@ -80,3 +80,55 @@ test('a single-day range narrows to exactly that day\'s activity', async ({ page
   await expect(page.getByTestId('streak')).toHaveText('1 day');
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(1);
 });
+
+test('the Lifetime preset is active by default and clears a manual range', async ({ page }) => {
+  await page.goto('/');
+
+  const lifetimeButton = page.getByRole('button', { name: 'Lifetime' });
+  await expect(lifetimeButton).toHaveAttribute('aria-pressed', 'true');
+
+  await page.getByLabel('From').fill('2026-06-08');
+  await page.getByLabel('To').fill('2026-06-14');
+  await expect(lifetimeButton).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByTestId('total-distance')).toHaveText('30.4 km');
+
+  await lifetimeButton.click();
+
+  await expect(lifetimeButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('From')).toHaveValue('');
+  await expect(page.getByLabel('To')).toHaveValue('');
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
+});
+
+test('the This week preset fills in the current Monday..Sunday range', async ({ page }) => {
+  await page.goto('/');
+
+  // Mirrors getCurrentWeekRange's Monday-start math (src/lib/stats.js) so
+  // this test stays correct regardless of which real day it runs on —
+  // it isn't pinned to the fixture the way the other tests here are. Uses
+  // local getFullYear/getMonth/getDate, not toISOString(), for the same
+  // UTC-day-shift reason getCurrentWeekRange itself does (see its comment).
+  const toDateInputValue = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const monday = new Date(today);
+  monday.setDate(monday.getDate() - daysSinceMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(sunday.getDate() + 6);
+
+  const thisWeekButton = page.getByRole('button', { name: 'This week' });
+  await expect(thisWeekButton).toHaveAttribute('aria-pressed', 'false');
+
+  await thisWeekButton.click();
+
+  await expect(thisWeekButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('From')).toHaveValue(toDateInputValue(monday));
+  await expect(page.getByLabel('To')).toHaveValue(toDateInputValue(sunday));
+});

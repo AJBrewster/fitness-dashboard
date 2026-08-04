@@ -7,6 +7,7 @@ import {
   getWeeklyActivityCount,
   filterByDateRange,
   getActivityTypeBreakdown,
+  getCurrentWeekRange,
 } from './lib/stats';
 import Summary from './components/Summary';
 import WeeklyDistanceChart from './components/WeeklyDistanceChart';
@@ -70,6 +71,18 @@ function App() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  const thisWeekRange = getCurrentWeekRange();
+
+  function selectLifetime() {
+    setStart('');
+    setEnd('');
+  }
+
+  function selectThisWeek() {
+    setStart(thisWeekRange.start);
+    setEnd(thisWeekRange.end);
+  }
+
   // <input type="date"> gives a bare 'YYYY-MM-DD', which Date parses as
   // midnight — append end-of-day so the "To" date is inclusive of
   // activities that happened on that day.
@@ -95,7 +108,16 @@ function App() {
       <div className="main">
         <header className="topbar">
           <h2 className="topbar-title">{topbarTitle}</h2>
-          <DateRangeFilter start={start} end={end} onStartChange={setStart} onEndChange={setEnd} />
+          <DateRangeFilter
+            start={start}
+            end={end}
+            onStartChange={setStart}
+            onEndChange={setEnd}
+            isLifetime={!start && !end}
+            isThisWeek={start === thisWeekRange.start && end === thisWeekRange.end}
+            onSelectLifetime={selectLifetime}
+            onSelectThisWeek={selectThisWeek}
+          />
         </header>
 
         <div className="content">
