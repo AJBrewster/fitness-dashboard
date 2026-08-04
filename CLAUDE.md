@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **The full visual redesign called out above as a separate later pass is now done (2026-07-30 – 2026-07-31, see `PLAN.md`'s "Post-v1: visual redesign" section for the full phase-by-phase log).** Sidebar/topbar app shell, `--accent`-token chart re-coloring, icon+sparkline KPI tiles, an activity-type donut, and wellness ring gauges (Training Readiness/Sleep Score/Body Battery) all shipped. One known, minor, unfixed rough edge: the dark-mode toggle scrolls off-screen in the collapsed mobile nav bar at narrow (~390px) widths — still functional and still found by tests, just not discoverable without scrolling that row horizontally.
 
-**Real data now syncs on a schedule instead of a one-time manual pull (added 2026-08-01, local-only — see `PLAN.md`'s "Post-v1: local sync + SQLite").** `scripts/sync_garmin.py` upserts into a local SQLite file and materializes the result to `src/data/*.local.json`; `lib/data.js` picks those up automatically when present via `import.meta.glob`. Nothing about the shipped app or its tests changed — this only replaces how the gitignored `.local.json` files get populated.
+**Real data now syncs on a schedule instead of a one-time manual pull (added 2026-08-01, local-only — see `PLAN.md`'s "Post-v1: local sync + SQLite").** `scripts/sync_garmin.py` upserts into a local SQLite file and materializes the result to `src/data/*.local.json`; `lib/data.js` picks those up only when `VITE_USE_LOCAL_DATA=true` is set explicitly, not merely by file presence (see Architecture below for why). Nothing about the shipped app or its tests changed — this only replaces how the gitignored `.local.json` files get populated.
 
 ```bash
 npm install
@@ -30,6 +30,8 @@ This is Alex's SDET portfolio project — the point is proving *Alex* can build 
 - **Nothing gets committed until Alex can explain every line to an interviewer.** Claude may draft, but Alex reviews, modifies, and owns the result. This now includes `src/lib/stats.js` and its Vitest suite (updated 2026-07-22 — Claude used to be barred from drafting this file specifically, since it's the code interviewers are most likely to probe; that restriction is dropped, but the "explain every line" bar still applies to it).
 - **Docs stay in sync every milestone.** Before each commit, update this file, `PLAN.md`, and `README.md` to match what's actually built — not batched up later. A stale doc actively misleads the next session (including Claude).
 - Work in milestone-sized increments (`PLAN.md`), each leaving the repo in a working, committable state.
+- **No `console.log` in committed code.** Enforced by `eslint`'s `no-console` rule (`console.warn`/`console.error` still allowed) — `npm run lint` is wired into CI, so this fails the build rather than relying on review to catch it.
+- **Self-improvement loop:** when Alex corrects an approach Claude took, capture the reason in this file before moving on — not just fix the immediate thing. This is already how every "Gotcha found here" note below got written; stating it explicitly means it keeps happening on purpose, not just by habit.
 
 ## Architecture
 
