@@ -11,6 +11,7 @@ portfolio project.
 > 🚧 **In progress.** See [PLAN.md](PLAN.md) for milestones and current status.
 
 ![Fitness Dashboard screenshot](docs/screenshot.png)
+![Fitness Dashboard screenshot, dark mode](docs/screenshot-dark.png)
 
 ## Why fixture data instead of the Garmin API
 
@@ -36,19 +37,20 @@ are the small committed synthetic samples; their real, gitignored
 
 ## Testing approach
 
-- **Unit tests (Vitest, 33 tests)** — 31 cover the calculation logic in
+- **Unit tests (Vitest, 37 tests)** — 35 cover the calculation logic in
   `src/lib/stats.js` (totals, weekly rollups, filters, streak, activity-type
-  breakdown, edge cases), deliberately separated from React components so
-  the math is testable without rendering anything; 2 more use
-  `@testing-library/react` to verify the wellness ring gauge's arc math and
-  score-clamping directly.
-- **E2E tests (Playwright, 12 tests)** cover the UI, tagged in two layers:
+  breakdown, current-week bounds, edge cases), deliberately separated from
+  React components so the math is testable without rendering anything; 2
+  more use `@testing-library/react` to verify the wellness ring gauge's arc
+  math and score-clamping directly.
+- **E2E tests (Playwright, 14 tests)** cover the UI, tagged in two layers:
   `@smoke` (7 tests — loads, summary renders, weekly chart, activity-type
   breakdown, wellness summary, trend charts, disabled "Reports" nav
-  placeholder) runs on every push; the full set adds 5 more covering the
+  placeholder) runs on every push; the full set adds 7 more covering the
   date-range filter (basic filter + clear, a no-match range, a
-  partial/one-sided range, a single-day range) and runs on demand. Same
-  smoke/regression layering used in production test suites.
+  partial/one-sided range, a single-day range, plus the Lifetime/This week
+  presets) and runs on demand. Same smoke/regression layering used in
+  production test suites.
 - **CI (GitHub Actions)** runs lint, unit tests, the build, and the
   Playwright `@smoke` set on every push (`.github/workflows/ci.yml`),
   uploading the HTML report as an artifact even on failure. The full
