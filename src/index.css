@@ -4,18 +4,58 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* ---------- type scale ----------
+     The design is dark-first with oversized numerics, so the numeral steps
+     are the load-bearing part of this scale. No webfont is loaded on
+     purpose: this project's whole thesis is deterministic, screenshot-able
+     testing, and a downloaded face adds a network dependency plus a flash
+     of fallback text that would make the visual-regression stretch goal in
+     PLAN.md flakier than it needs to be. The character comes from size,
+     tabular figures, and tracking instead of from a novelty family. */
+  /* Capped at 3rem rather than pushed larger: above that the widest metric
+     ("10h 7m") stops fitting four-across and the cluster breaks 3+1, which
+     reads as a layout bug rather than a deliberate row. */
+  --fs-metric: clamp(2.25rem, 4.6vw, 3rem);
+  --fs-metric-sm: 2rem;
+  --fs-title: 1.05rem;
+  --fs-body: 0.9rem;
+  --fs-label: 0.7rem;
+  --tracking-label: 0.14em;
+  --tracking-metric: -0.03em;
+
+  /* ---------- spacing rhythm ---------- */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2.5rem;
+  --space-5: 4rem;
+
+  /* ---------- dark surfaces (the designed-for state) ----------
+     Three steps, not one: the canvas recedes, panels lift by a hair, and
+     the inset step is for hover and chart plot backgrounds. Depth comes
+     from these plus a hairline, never from a drop shadow. */
+  --surface-0: #0a0c10;
+  --surface-1: #12161c;
+  --surface-2: #1a2029;
+  --hairline: rgba(255, 255, 255, 0.09);
+  --ink: #e6ecf2;
+  --text-secondary: #94a3b4;
+
+  color: var(--ink);
+  background-color: var(--surface-0);
+
   /* Categorical chart palette (dark-mode steps, this app's default) —
-     validated via the dataviz skill's validate_palette.js: fixed hue
-     order, worst adjacent CVD ΔE 8.4, worst adjacent normal-vision ΔE
-     19.3, all 7 slots >=3:1 against this dark surface. */
+     re-validated 2026-08-05 via the dataviz skill's validate_palette.js
+     against the new near-black surface, since moving the canvas
+     invalidates any earlier contrast result. Unchanged and still passing:
+     worst adjacent CVD delta-E 8.4, worst adjacent normal-vision 19.3,
+     all 7 slots at or above 3:1 on this surface. */
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
@@ -25,79 +65,99 @@
   --series-7: #9085e9;
 
   /* Status palette — fixed, never themed; same steps both modes. Always
-     paired with a text label, never color-alone (see WellnessSummary). */
+     paired with a text label, never color-alone (see WellnessSummary).
+     On the light surface the warning and serious steps sit below 3:1 by
+     design; the paired label is the mitigation, not the color. */
   --status-good: #0ca30c;
   --status-warning: #fab219;
   --status-serious: #ec835a;
 
-  --text-secondary: #c3c2b7;
-
-  /* Single-series accent (line charts, interactive controls) — replaces
-     the stock Vite #646cff on chart strokes. Contrast checked via the
-     dataviz skill's validate_palette.js against this app's real surfaces:
-     6.56:1 on the dark background (#242424), see the light block below
-     for the light-mode step (4.88:1 on #ffffff). */
-  --accent: #35b8cc;
+  /* Single-series accent — the one high-energy color in the system,
+     reserved for progress, data marks, and the focused control. Stepped up
+     from the previous #35b8cc for the darker canvas: 11.09:1 here.
+     Deliberately not the acid-green or vermilion that dark dashboards
+     default to; this cyan is the identity the project already had. */
+  --accent: #3fd5e8;
 
   /* Sidebar is deliberately always-dark regardless of the app's own
      light/dark theme (a persistent-chrome pattern, not an oversight) — so
      these live here once, unthemed, rather than in the light/dark blocks
-     below. */
-  --sidebar-bg: #101724;
-  --sidebar-ink: #cdd6e2;
-  --sidebar-ink-muted: #6f7c90;
-  --sidebar-active-bg: rgba(53, 184, 204, 0.16);
+     below. Retuned to sit against the new canvas rather than float on it. */
+  --sidebar-bg: #06080b;
+  --sidebar-ink: #ccd6e0;
+  --sidebar-ink-muted: #6b7889;
+  --sidebar-active-bg: rgba(63, 213, 232, 0.14);
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--accent);
   text-decoration: inherit;
 }
+
 a:hover {
-  color: #535bf2;
+  text-decoration: underline;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--surface-0);
+  color: var(--ink);
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 1.15rem;
+  line-height: 1.2;
 }
 
+/* Buttons carry no chrome of their own — every button in this app is
+   styled by its own component class (nav-link, date-preset, switch). The
+   stock Vite pill background here used to fight all three. */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
   cursor: pointer;
-  transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --surface-0: #f7f8fa;
+    --surface-1: #ffffff;
+    --surface-2: #edf0f4;
+    --hairline: rgba(16, 20, 24, 0.1);
+    --ink: #101418;
+    --text-secondary: #55606e;
+
+    color: var(--ink);
+    background-color: var(--surface-0);
 
     /* Categorical palette, light-mode steps — same validated ordering,
-       worst adjacent CVD ΔE 9.1, worst adjacent normal-vision ΔE 19.6.
-       Slots 3/4/5 (aqua/yellow/magenta) sit below 3:1 on this light
-       surface by design — mitigated by always showing a direct label
-       (see ActivityTypeBreakdown), never relying on color alone. */
+       re-checked against the new light surface 2026-08-05: worst adjacent
+       CVD delta-E 9.1, worst adjacent normal-vision 19.6. Slots 3/4/5
+       (green/yellow/pink) sit below 3:1 on this surface, unchanged from
+       before — mitigated by always showing a direct label (see
+       ActivityTypeBreakdown), never relying on color alone. */
     --series-1: #2a78d6;
     --series-2: #eb6834;
     --series-3: #1baf7a;
@@ -106,17 +166,8 @@ button:focus-visible {
     --series-6: #008300;
     --series-7: #4a3aa7;
 
-    --text-secondary: #52514e;
-
-    /* Light-mode accent step — 4.88:1 on this surface (#ffffff), see the
-       dark step above for the other mode. */
-    --accent: #0e7c90;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+    /* Light-mode accent step — 5.56:1 on this surface. */
+    --accent: #0b6e80;
   }
 }
 
@@ -126,12 +177,24 @@ button:focus-visible {
    "prefers-color-scheme" block, in either direction, regardless of source
    order — so these two blocks are what let a manual choice win over
    whatever the OS reports. Only the properties that actually differ
-   between modes need repeating here (color, background, the categorical
-   series, --text-secondary, --accent); the --status- and --sidebar-
-   prefixed tokens are never themed, so those are left untouched. */
-:root[data-theme="dark"] {
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+   between modes need repeating here (surfaces, ink, the categorical
+   series, the accent); the status- and sidebar- prefixed tokens are never
+   themed, so those are left untouched.
+
+   Careful with comments in this file: a substring shaped like a slash
+   between two token names closes the comment early and silently truncates
+   the rest of the stylesheet during minification, while npm run build
+   still reports success. Spell the token prefixes out in prose instead. */
+:root[data-theme='dark'] {
+  --surface-0: #0a0c10;
+  --surface-1: #12161c;
+  --surface-2: #1a2029;
+  --hairline: rgba(255, 255, 255, 0.09);
+  --ink: #e6ecf2;
+  --text-secondary: #94a3b4;
+
+  color: var(--ink);
+  background-color: var(--surface-0);
 
   --series-1: #3987e5;
   --series-2: #d95926;
@@ -141,13 +204,19 @@ button:focus-visible {
   --series-6: #008300;
   --series-7: #9085e9;
 
-  --text-secondary: #c3c2b7;
-  --accent: #35b8cc;
+  --accent: #3fd5e8;
 }
 
-:root[data-theme="light"] {
-  color: #213547;
-  background-color: #ffffff;
+:root[data-theme='light'] {
+  --surface-0: #f7f8fa;
+  --surface-1: #ffffff;
+  --surface-2: #edf0f4;
+  --hairline: rgba(16, 20, 24, 0.1);
+  --ink: #101418;
+  --text-secondary: #55606e;
+
+  color: var(--ink);
+  background-color: var(--surface-0);
 
   --series-1: #2a78d6;
   --series-2: #eb6834;
@@ -157,6 +226,5 @@ button:focus-visible {
   --series-6: #008300;
   --series-7: #4a3aa7;
 
-  --text-secondary: #52514e;
-  --accent: #0e7c90;
+  --accent: #0b6e80;
 }

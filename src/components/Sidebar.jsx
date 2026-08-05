@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types';
 
-const SECTIONS = [
-  { id: 'section-activity', label: 'Activity' },
-  { id: 'section-wellness', label: "Today's Wellness" },
-  { id: 'section-trends', label: 'Trends' },
+// One source of truth for the app's views, shared with App.jsx so the nav
+// list and the rendered view can't drift apart. `hasDateFilter` decides
+// whether the topbar shows the From/To controls: the filter only ever fed
+// the activity summary and charts, so showing it on a view it can't affect
+// would imply a relationship that doesn't exist.
+const VIEWS = [
+  { id: 'view-activity', label: 'Activity', hasDateFilter: true },
+  { id: 'view-wellness', label: "Today's Wellness", hasDateFilter: false },
+  { id: 'view-trends', label: 'Trends', hasDateFilter: false },
+  { id: 'view-golf', label: 'Golf', hasDateFilter: false },
 ];
 
-function Sidebar({ activeSection, onNavigate, theme, onToggleTheme }) {
+function Sidebar({ activeView, onNavigate, theme, onToggleTheme }) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -16,14 +22,15 @@ function Sidebar({ activeSection, onNavigate, theme, onToggleTheme }) {
 
       <span className="nav-group-label">Sections</span>
       <ul className="nav-list">
-        {SECTIONS.map((section) => (
-          <li key={section.id}>
+        {VIEWS.map((view) => (
+          <li key={view.id}>
             <button
               type="button"
-              className={`nav-link${activeSection === section.id ? ' active' : ''}`}
-              onClick={() => onNavigate(section.id)}
+              className={`nav-link${activeView === view.id ? ' active' : ''}`}
+              aria-current={activeView === view.id ? 'page' : undefined}
+              onClick={() => onNavigate(view.id)}
             >
-              {section.label}
+              {view.label}
             </button>
           </li>
         ))}
@@ -56,11 +63,11 @@ function Sidebar({ activeSection, onNavigate, theme, onToggleTheme }) {
 }
 
 Sidebar.propTypes = {
-  activeSection: PropTypes.string.isRequired,
+  activeView: PropTypes.string.isRequired,
   onNavigate: PropTypes.func.isRequired,
   theme: PropTypes.oneOf(['light', 'dark']).isRequired,
   onToggleTheme: PropTypes.func.isRequired,
 };
 
 export default Sidebar;
-export { SECTIONS };
+export { VIEWS };

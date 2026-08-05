@@ -1,11 +1,34 @@
 import { test, expect } from '@playwright/test';
 
-// Values below match src/data/activities.json, the committed synthetic
-// fixture — deterministic on purpose, see PLAN.md's Data strategy.
+// Values below match the committed synthetic fixtures in src/data/ —
+// deterministic on purpose, see PLAN.md's Data strategy.
+
+// The app is view-switched, not one long scrolling page (changed 2026-08-05
+// when Golf was added). Anything outside the default Activity view has to be
+// navigated to first. Sidebar items are real <button>s, so getByRole is the
+// natural locator — and note none of the view labels may contain "to" as a
+// substring, or they collide with filters.spec.js's getByLabel('To').
+async function goToView(page, name) {
+  await page.goto('/');
+  await page.getByRole('button', { name, exact: true }).click();
+}
 
 test('dashboard loads', { tag: '@smoke' }, async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible();
+});
+
+test('sidebar switches views instead of scrolling one long page', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  // Activity is the default view; wellness content is not merely off-screen,
+  // it is not rendered at all until its view is selected.
+  await expect(page.getByTestId('total-distance')).toBeVisible();
+  await expect(page.getByTestId('sleep-score')).toHaveCount(0);
+
+  await page.getByRole('button', { name: "Today's Wellness", exact: true }).click();
+  await expect(page.getByTestId('sleep-score')).toBeVisible();
+  await expect(page.getByTestId('total-distance')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: "Today's Wellness", level: 2 }).first()).toBeVisible();
 });
 
 test('summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
@@ -14,10 +37,15 @@ test('summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
   // coincidentally match text Recharts renders elsewhere in the SVG
   // (axis ticks, tooltip markup), which trips Playwright's strict-mode
   // "multiple elements" check — hit this for real before testids existed.
-  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
+  // The testid sits on the numeral only — the unit is a sibling element so
+  // it can be styled down beside an oversized figure (visual redesign,
+  // 2026-08-05). Assert both, so demoting the unit visually didn't quietly
+  // drop it from the page.
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6');
   await expect(page.getByTestId('total-duration')).toHaveText('10h 7m');
   await expect(page.getByTestId('activity-count')).toHaveText('14');
-  await expect(page.getByTestId('streak')).toHaveText('3 days');
+  await expect(page.getByTestId('streak')).toHaveText('3');
+  await expect(page.locator('.summary-unit')).toHaveText(['km', 'days']);
 });
 
 test('weekly distance chart renders', { tag: '@smoke' }, async ({ page }) => {
@@ -43,7 +71,7 @@ test('activity type breakdown renders one donut slice and one legend row per typ
 });
 
 test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
-  await page.goto('/');
+  await goToView(page, "Today's Wellness");
   await expect(page.getByTestId('training-readiness')).toHaveText('61');
   // Training Readiness split from one combined sentence into a heading plus
   // a separate status chip when it became a ring gauge (visual-redesign
@@ -59,7 +87,7 @@ test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }
 });
 
 test('trend charts render', { tag: '@smoke' }, async ({ page }) => {
-  await page.goto('/');
+  await goToView(page, 'Trends');
   await expect(page.locator('.chart-vo2-max .recharts-line-dots circle')).toHaveCount(4);
   await expect(page.locator('.chart-weight .recharts-line-dots circle')).toHaveCount(5);
 });
@@ -70,4 +98,23 @@ test('sidebar "Reports" item is a disabled placeholder, not a live link', { tag:
   await expect(reports).toBeVisible();
   await expect(reports).toBeDisabled();
   await expect(reports).toContainText('Soon');
+});
+
+test('golf view renders the selected round', { tag: '@smoke' }, async ({ page }) => {
+  await goToView(page, 'Golf');
+  await expect(page.getByRole('heading', { name: 'Golf', level: 2 }).first()).toBeVisible();
+  // Defaults to the most recent round in golfRounds.json, which is the
+  // summary-only one — so the scorecard stands down and the scoring trend,
+  // which works on round totals, does not. See e2e/golf.spec.js.
+  await expect(page.getByTestId('golf-score')).toHaveText('87');
+  await expect(page.locator('.chart-scoring-trend .recharts-line-dots circle')).toHaveCount(7);
+});
+
+test('date filter is hidden on views it cannot affect', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByLabel('From')).toBeVisible();
+  await page.getByRole('button', { name: 'Golf', exact: true }).click();
+  // The From/To inputs only ever filtered the activity summary and charts,
+  // so rendering them beside golf would imply a link that isn't there.
+  await expect(page.getByLabel('From')).toHaveCount(0);
 });

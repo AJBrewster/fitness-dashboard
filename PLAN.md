@@ -32,6 +32,35 @@ sparklines (post-v1 redesign) · local SQLite store + scheduled Garmin sync
 (post-v1 sync). Full history of how each of these shipped is in git log —
 this file tracks current state and what's next, not a phase-by-phase diary.
 
+**Shipped 2026-08-05: golf section + dark-first restyle.** Four milestones,
+each committable on its own — all four done, tests/lint/build green:
+
+1. ✅ Golf data + math — `golfRounds.json`, `getGolfRounds()`, `src/lib/golf.js`,
+   25 unit tests. No UI.
+2. ✅ Nav restructure — one scrolling page + scrollspy becomes real view
+   switching (Activity / Wellness / Trends / Golf). Golf renders a
+   placeholder until milestone 4.
+3. ✅ Dark-first restyle — near-black canvas, one high-energy accent,
+   oversized display numerals, hairlines over card borders. The `--series-*`
+   palette was re-validated against the new surfaces and needed **no
+   changes**; only `--accent` was re-stepped for the darker canvas. Also
+   fixed the ~390px dark-mode-toggle rough edge along the way.
+4. ✅ Golf UI — round picker, KPI row, hole-by-hole scorecard with the
+   conventional markers, score distribution, scoring by par, putting panel,
+   scoring trend. Built directly in the new visual language so nothing got
+   styled twice.
+
+**No Strokes Gained, deliberately.** Real SG needs every shot's starting lie
+and distance-to-hole measured against a baseline table; hole-by-hole
+scorecards cannot produce it. A number labelled "strokes gained" that wasn't
+computed that way would be worse than not having one. If shot-by-shot entry
+ever becomes worth the data-entry burden, that's the point to revisit it —
+not before.
+
+Golf data is hand-entered by design; there is no Garmin sync path for it (no
+golf endpoints on the MCP server) and one should not be invented — see
+"Known failure modes" #1.
+
 **Still out of scope, on purpose:** auth, multi-user, deployment. Don't add
 these just because they'd be "nice" — see "What's next" below for the actual
 current priorities, and don't self-assign new scope without flagging it
@@ -55,6 +84,31 @@ first (see "Known failure modes").
   survive. Both this pass and the sync architecture are described in full
   in `scripts/sync_garmin.py`'s own docstring/comments — that's the current
   source of truth, not this file.
+- **Golf data comes from Golf Pad, and Golf Pad has no API** (researched
+  2026-08-05). No developer portal, no documented integration path, no
+  community-maintained client of the sort `garminconnect` provides. The web
+  dashboard is a login-gated SPA whose internal endpoints could be
+  reverse-engineered — **rejected deliberately**: undocumented, unversioned,
+  breaks without notice, needs scraped session cookies, and a project whose
+  whole thesis is trustworthy deterministic tests should not rest on a
+  private endpoint. The supported route is the CSV export (phone app ->
+  Settings -> Data Export, emailed link valid 3 days, always a full history
+  dump), imported by `scripts/import_golfpad.py`. Because the export is
+  triggered by hand on a phone, **this dataset can never be scheduled** the
+  way the Garmin one is.
+  - The **free tier exports round totals only** — one row per round, no
+    per-hole rows. That is why a round has two possible shapes and why the
+    per-hole panels stand down for imported rounds. The **comprehensive**
+    export (per-hole rows, plus shot rows carrying Golf Pad's own Strokes
+    Gained across five categories) requires Golf Pad Premium; upgrading is
+    what would unlock those panels on real data.
+  - **Documented exception to the genericization rule:** imported golf
+    rounds keep their **real course names**. Everywhere else, real place
+    names never survive the privacy pass even into gitignored files.
+    `golfRounds.local.json` is gitignored so the names never leave the
+    machine, and Alex chose readability here. The player-name column *is*
+    still dropped on import. This is a deliberate carve-out, not the rule
+    rotting.
 - Garmin auth reuses `~/.garminconnect` (same token cache the `garmin` MCP
   server uses). Tokens last ~6 months; re-auth command:
   `uvx --python 3.12 --from git+https://github.com/Taxuspt/garmin_mcp garmin-mcp-auth --force-reauth`
@@ -112,11 +166,10 @@ Roughly in priority order:
    - Dedicated pace/HR charts and/or a per-activity detail view (HR data
      already exists in `wellness.json`, but there's no historical HR chart
      or drill-down yet)
-4. **Known, minor, already-accepted rough edge:** dark-mode toggle scrolls
-   off-screen in the collapsed mobile nav at ~390px width. Still functional,
-   still tested, just not discoverable without scrolling. Not blocking
-   anything — fix opportunistically if touching that area, not a standalone
-   priority.
+4. ~~Dark-mode toggle scrolls off-screen in the collapsed mobile nav at
+   ~390px.~~ **Fixed 2026-08-05** during the restyle — the sidebar footer is
+   now pinned to the right of the mobile nav rather than sitting in its
+   scrolling flow.
 
 ## Known failure modes (watch for these)
 

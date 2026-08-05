@@ -1,0 +1,163 @@
+[
+  {
+    "_comment": "Summary-only round — the shape Golf Pad's free-tier round-level CSV export produces. Kept in the committed fixture so the per-hole panels' degradation path is exercised by the e2e suite, not just by unit tests.",
+    "date": "2026-08-02",
+    "course": "Course B",
+    "tees": "Yellow",
+    "source": "golfpad",
+    "summary": {
+      "holesPlayed": 18,
+      "score": 87,
+      "par": 71,
+      "putts": 35,
+      "girCount": 5,
+      "fairwaysHit": 8,
+      "fairwayAttempts": 14,
+      "penalties": 2,
+      "sandShots": 1,
+      "courseRating": 70.2,
+      "slope": 123
+    }
+  },
+  {
+    "date": "2026-05-10",
+    "course": "Course A",
+    "tees": "White",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 2, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 3, "par": 5, "score": 7, "putts": 3, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 4, "par": 4, "score": 5, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 6, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 6, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 5, "putts": 3, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 8, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 9, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 10, "par": 4, "score": 5, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 11, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 12, "par": 3, "score": 4, "putts": 3, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 13, "par": 5, "score": 7, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 14, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 15, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 16, "par": 3, "score": 3, "putts": 1, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 17, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 18, "par": 4, "score": 6, "putts": 2, "fairway": false, "gir": false, "penalties": 1 }
+    ]
+  },
+  {
+    "date": "2026-05-24",
+    "course": "Course A",
+    "tees": "White",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 2, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 3, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 4, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 5, "putts": 3, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 6, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 8, "par": 5, "score": 6, "putts": 3, "fairway": false, "gir": true, "penalties": 0 },
+      { "hole": 9, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 10, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 11, "par": 4, "score": 4, "putts": 1, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 12, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 13, "par": 5, "score": 7, "putts": 3, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 14, "par": 4, "score": 5, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 15, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 16, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 17, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 18, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 }
+    ]
+  },
+  {
+    "date": "2026-06-07",
+    "course": "Course B",
+    "tees": "Yellow",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 2, "par": 4, "score": 6, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 3, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 4, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 5, "putts": 3, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 6, "par": 3, "score": 4, "putts": 3, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 8, "par": 4, "score": 6, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 9, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 10, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 11, "par": 3, "score": 3, "putts": 1, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 12, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 13, "par": 5, "score": 7, "putts": 3, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 14, "par": 4, "score": 5, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 15, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 16, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 17, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 18, "par": 4, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 1 }
+    ]
+  },
+  {
+    "date": "2026-06-21",
+    "course": "Course A",
+    "tees": "White",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 2, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 3, "par": 5, "score": 3, "putts": 1, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 4, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 5, "putts": 3, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 6, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 8, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 9, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 10, "par": 4, "score": 3, "putts": 1, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 11, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 12, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 13, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 14, "par": 4, "score": 4, "putts": 1, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 15, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 16, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 17, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 18, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 }
+    ]
+  },
+  {
+    "date": "2026-07-05",
+    "course": "Course B",
+    "tees": "Yellow",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 2, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 3, "par": 3, "score": 4, "putts": 3, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 4, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 6, "par": 3, "score": 3, "putts": 1, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 8, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 9, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 }
+    ]
+  },
+  {
+    "date": "2026-07-19",
+    "course": "Course A",
+    "tees": "White",
+    "holes": [
+      { "hole": 1, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 2, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 3, "par": 5, "score": 6, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 4, "par": 4, "score": 4, "putts": 1, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 5, "par": 4, "score": 5, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 6, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 7, "par": 4, "score": 5, "putts": null, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 8, "par": 5, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 9, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 10, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 11, "par": 4, "score": 4, "putts": 2, "fairway": true, "gir": true, "penalties": 0 },
+      { "hole": 12, "par": 3, "score": 4, "putts": 2, "fairway": null, "gir": false, "penalties": 0 },
+      { "hole": 13, "par": 5, "score": 6, "putts": 2, "fairway": true, "gir": false, "penalties": 0 },
+      { "hole": 14, "par": 4, "score": 5, "putts": null, "fairway": false, "gir": false, "penalties": 0 },
+      { "hole": 15, "par": 4, "score": 5, "putts": 2, "fairway": false, "gir": false, "penalties": 1 },
+      { "hole": 16, "par": 3, "score": 3, "putts": 2, "fairway": null, "gir": true, "penalties": 0 },
+      { "hole": 17, "par": 5, "score": 6, "putts": 3, "fairway": false, "gir": true, "penalties": 0 },
+      { "hole": 18, "par": 4, "score": 6, "putts": 3, "fairway": false, "gir": false, "penalties": 0 }
+    ]
+  }
+]

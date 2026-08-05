@@ -2,6 +2,7 @@ import activities from '../data/activities.json';
 import wellness from '../data/wellness.json';
 import vo2MaxTrend from '../data/vo2MaxTrend.json';
 import weighIns from '../data/weighIns.json';
+import golfRounds from '../data/golfRounds.json';
 
 // Real data synced by scripts/sync_garmin.py lands in these gitignored
 // *.local.json files (see PLAN.md's Data strategy). import.meta.glob only
@@ -40,4 +41,12 @@ export function getVo2MaxTrend() {
 
 export function getWeighIns() {
   return pick('weighIns.local.json', weighIns);
+}
+
+// Golf rounds are hand-maintained, not synced: the garmin MCP server exposes
+// no golf endpoints (Garmin Golf is a separate product API), so
+// scripts/sync_garmin.py never touches this dataset. The .local.json
+// convention still applies — real rounds stay gitignored.
+export function getGolfRounds() {
+  return pick('golfRounds.local.json', golfRounds);
 }

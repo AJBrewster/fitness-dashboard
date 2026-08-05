@@ -21,10 +21,10 @@ test('filtering by date range updates the summary and chart', async ({ page }) =
   await page.getByLabel('From').fill('2026-06-08');
   await page.getByLabel('To').fill('2026-06-14');
 
-  await expect(page.getByTestId('total-distance')).toHaveText('30.4 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('30.4');
   await expect(page.getByTestId('total-duration')).toHaveText('2h 30m');
   await expect(page.getByTestId('activity-count')).toHaveText('3');
-  await expect(page.getByTestId('streak')).toHaveText('3 days');
+  await expect(page.getByTestId('streak')).toHaveText('3');
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(1);
 });
 
@@ -33,13 +33,13 @@ test('clearing the date range shows all activities again', async ({ page }) => {
 
   await page.getByLabel('From').fill('2026-06-08');
   await page.getByLabel('To').fill('2026-06-14');
-  await expect(page.getByTestId('total-distance')).toHaveText('30.4 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('30.4');
 
   await page.getByLabel('From').fill('');
   await page.getByLabel('To').fill('');
 
-  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
-  await expect(page.getByTestId('streak')).toHaveText('3 days');
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6');
+  await expect(page.getByTestId('streak')).toHaveText('3');
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
 });
 
@@ -50,10 +50,10 @@ test('a range with no matching activities shows a zeroed-out summary', async ({ 
   await page.getByLabel('From').fill('2026-01-01');
   await page.getByLabel('To').fill('2026-01-31');
 
-  await expect(page.getByTestId('total-distance')).toHaveText('0.0 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('0.0');
   await expect(page.getByTestId('total-duration')).toHaveText('0h 0m');
   await expect(page.getByTestId('activity-count')).toHaveText('0');
-  await expect(page.getByTestId('streak')).toHaveText('0 days');
+  await expect(page.getByTestId('streak')).toHaveText('0');
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(0);
 });
 
@@ -64,7 +64,7 @@ test('only one end of the range filled leaves activities unfiltered', async ({ p
   // "To" left empty on purpose — App.jsx only applies the filter once both
   // start and end are set.
 
-  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6');
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(5);
 });
 
@@ -74,10 +74,13 @@ test('a single-day range narrows to exactly that day\'s activity', async ({ page
   await page.getByLabel('From').fill('2026-06-01');
   await page.getByLabel('To').fill('2026-06-01');
 
-  await expect(page.getByTestId('total-distance')).toHaveText('3.2 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('3.2');
   await expect(page.getByTestId('total-duration')).toHaveText('0h 35m');
   await expect(page.getByTestId('activity-count')).toHaveText('1');
-  await expect(page.getByTestId('streak')).toHaveText('1 day');
+  await expect(page.getByTestId('streak')).toHaveText('1');
+  // Units live in a sibling element since the redesign, so the singular
+  // "day" is only covered if it's asserted separately from the numeral.
+  await expect(page.locator('.summary-unit')).toHaveText(['km', 'day']);
   await expect(page.locator('.chart-weekly-distance .recharts-line-dots circle')).toHaveCount(1);
 });
 
@@ -90,14 +93,14 @@ test('the Lifetime preset is active by default and clears a manual range', async
   await page.getByLabel('From').fill('2026-06-08');
   await page.getByLabel('To').fill('2026-06-14');
   await expect(lifetimeButton).toHaveAttribute('aria-pressed', 'false');
-  await expect(page.getByTestId('total-distance')).toHaveText('30.4 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('30.4');
 
   await lifetimeButton.click();
 
   await expect(lifetimeButton).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByLabel('From')).toHaveValue('');
   await expect(page.getByLabel('To')).toHaveValue('');
-  await expect(page.getByTestId('total-distance')).toHaveText('73.6 km');
+  await expect(page.getByTestId('total-distance')).toHaveText('73.6');
 });
 
 test('the This week preset fills in the current Monday..Sunday range', async ({ page }) => {

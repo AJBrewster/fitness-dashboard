@@ -7,103 +7,107 @@
 .app-shell {
   display: flex;
   min-height: 100vh;
+  background: var(--surface-0);
 }
 
 .sidebar {
-  width: 220px;
+  width: 232px;
   flex-shrink: 0;
   background: var(--sidebar-bg);
   color: var(--sidebar-ink);
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1rem;
+  padding: var(--space-3) var(--space-2);
   position: sticky;
   top: 0;
   height: 100vh;
 }
 
 .brand {
-  padding: 0 0.5rem;
-  margin-bottom: 2rem;
+  padding: 0 var(--space-1);
+  margin-bottom: var(--space-4);
 }
 
 .brand h1 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.2;
   color: #fff;
 }
 
 .brand-sub {
   display: block;
-  font-size: 0.7rem;
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
   color: var(--sidebar-ink-muted);
-  margin-top: 0.2rem;
+  margin-top: 0.35rem;
 }
 
 .nav-group-label {
   display: block;
-  font-size: 0.65rem;
+  font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--sidebar-ink-muted);
-  padding: 0 0.5rem;
-  margin-bottom: 0.4rem;
+  padding: 0 var(--space-1);
+  margin-bottom: 0.6rem;
 }
 
 .nav-list {
   list-style: none;
-  margin: 0 0 1.5rem;
+  margin: 0 0 var(--space-3);
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
 }
 
+/* The active item is marked by an accent bar on the leading edge rather
+   than a filled pill: it reads at a glance without adding a second block
+   of color to chrome that is already dark. */
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-1);
   width: 100%;
-  border: none;
-  background: none;
   color: var(--sidebar-ink);
-  font-size: 0.85rem;
+  font-size: var(--fs-body);
   text-align: left;
-  padding: 0.5rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 0.55rem 0.6rem;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.06);
+.nav-link:hover:not([disabled]) {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-link.active {
   background: var(--sidebar-active-bg);
+  border-left-color: var(--accent);
   color: #fff;
+  font-weight: 600;
 }
 
 .nav-link[disabled] {
   color: var(--sidebar-ink-muted);
   cursor: default;
-  opacity: 0.6;
-}
-
-.nav-link[disabled]:hover {
-  background: none;
 }
 
 .nav-soon {
   margin-left: auto;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 0.1rem 0.4rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .sidebar-spacer {
@@ -112,7 +116,7 @@
 
 .sidebar-foot {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 0.85rem;
+  padding-top: var(--space-2);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -122,8 +126,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0.5rem;
-  font-size: 0.82rem;
+  padding: 0 var(--space-1);
+  font-size: var(--fs-body);
 }
 
 .switch {
@@ -131,10 +135,7 @@
   height: 19px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
-  border: none;
   position: relative;
-  cursor: pointer;
-  padding: 0;
   flex-shrink: 0;
 }
 
@@ -161,13 +162,16 @@
 .sidebar-note {
   font-size: 0.65rem;
   color: var(--sidebar-ink-muted);
-  padding: 0 0.5rem;
+  padding: 0 var(--space-1);
   margin: 0;
 }
+
+/* ---------- topbar ---------- */
 
 .main {
   flex: 1;
   min-width: 0;
+  background: var(--surface-0);
 }
 
 .topbar {
@@ -177,108 +181,225 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: var(--space-3);
   flex-wrap: wrap;
-  padding: 1rem 2rem;
-  background: inherit;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .topbar-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
+/* ---------- content ---------- */
+
 .content {
-  max-width: 1000px;
-  padding: 2rem;
-  text-align: center;
+  max-width: 1160px;
+  padding: var(--space-4);
+  text-align: left;
 }
+
+.page-section {
+  margin-top: 0;
+}
+
+/* The topbar already names the view in uppercase, so the in-page heading
+   is the readable one — visually hidden would lose it for sighted users
+   scrolling a long view, so it stays, quiet. */
+.section-title {
+  margin: 0 0 var(--space-3);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+
+.view-placeholder {
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+/* ---------- metric cluster (the signature element) ----------
+   Oversized tabular numeral, a short accent tick beneath it, and a tracked
+   uppercase micro-label above. No card border: the cluster is bounded by
+   two hairlines and separated internally by whitespace, which survives
+   wrapping in a way per-item dividers do not. */
 
 .summary {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .summary-stat {
   display: flex;
   flex-direction: column;
-  min-width: 140px;
-  padding: 0.85rem 1rem;
-  border: 1px solid rgba(128, 128, 128, 0.25);
-  border-radius: 8px;
+  gap: 0.35rem;
+  min-width: 190px;
+  flex: 1 1 190px;
 }
 
 .summary-stat-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.45rem;
+  color: var(--text-secondary);
 }
 
 .summary-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--accent);
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
-.summary-value {
-  font-size: 1.5rem;
+.summary-label {
+  font-size: var(--fs-label);
   font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: inherit;
 }
 
-.summary-label {
-  color: #888;
-  font-size: 0.875rem;
+.summary-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-size: var(--fs-metric);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--tracking-metric);
+  /* Tabular figures keep the numerals on a shared grid, so a value ticking
+     from 9 to 10 doesn't shuffle everything beside it. */
+  font-variant-numeric: tabular-nums;
+  /* A wrapped metric ("10h / 7m") pushes its own sparkline down and breaks
+     the baseline the whole cluster is read along — the tile grows instead. */
+  white-space: nowrap;
+}
+
+.summary-unit {
+  font-size: var(--fs-title);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* The accent tick that crowns each metric — short, 2px, the one place the
+   high-energy color appears in the cluster. It is ::before rather than
+   ::after because a flex column places ::after last, which would drop the
+   tick below the sparkline instead of heading the tile. */
+.summary-stat::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 0.4rem;
 }
 
 .sparkline {
   display: block;
   width: 100%;
-  height: 22px;
-  margin-top: 0.4rem;
+  max-width: 160px;
+  height: 26px;
+  margin-top: 0.6rem;
 }
 
 .sparkline-line {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 1.75;
-  opacity: 0.85;
+  stroke-width: 2;
+  opacity: 0.75;
 }
 
 .sparkline-dot {
   fill: var(--accent);
 }
 
+/* ---------- charts ---------- */
+
 .chart {
-  margin-top: 3rem;
+  margin-top: var(--space-5);
   text-align: left;
+}
+
+.chart:first-of-type {
+  margin-top: 0;
+}
+
+.chart h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Recharts renders its grid, axes, and tooltip with hardcoded light-theme
+   colors. Restyling them here rather than passing stroke props to each
+   chart keeps every chart consistent and means a new chart inherits the
+   treatment instead of having to remember it. Grid and axes are recessive
+   by rule — the data marks are the only thing meant to carry weight. */
+.recharts-cartesian-grid line {
+  stroke: var(--hairline);
+}
+
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--hairline);
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Recharts sets the tooltip's surface as an inline style, so overriding it
+   needs !important — there is no prop for the container's background. */
+.recharts-default-tooltip {
+  background: var(--surface-1) !important;
+  border: 1px solid var(--hairline) !important;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: var(--fs-body);
+}
+
+/* The donut is one figure in a left-aligned column, so it is boxed to a
+   readable width instead of centring itself across the full content width
+   and floating away from the legend that explains it. */
+.chart-activity-types .recharts-responsive-container {
+  max-width: 300px;
 }
 
 .activity-type-legend {
   list-style: none;
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.25rem;
+  gap: 0.5rem 1.5rem;
 }
 
 .activity-type-row {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -289,91 +410,105 @@
 
 .legend-count {
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
+
+/* ---------- date range filter ---------- */
 
 .date-range-filter {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: flex-end;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .date-range-filter label {
   display: flex;
   flex-direction: column;
-  font-size: 0.875rem;
-  color: #888;
+  gap: 0.25rem;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.date-range-filter input {
+  font: inherit;
+  font-size: var(--fs-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
 }
 
 .date-presets {
   display: flex;
-  gap: 0.2rem;
+  gap: 0.15rem;
   padding: 0.2rem;
-  border: 1px solid rgba(128, 128, 128, 0.25);
+  border: 1px solid var(--hairline);
   border-radius: 999px;
+  background: var(--surface-1);
 }
 
 .date-preset {
-  border: none;
-  background: none;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 0.35rem 0.75rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .date-preset:hover {
-  background: rgba(128, 128, 128, 0.12);
+  background: var(--surface-2);
 }
 
 .date-preset[aria-pressed='true'] {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: var(--accent);
 }
 
-.page-section {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(128, 128, 128, 0.25);
-}
-
-.page-section:first-of-type {
-  margin-top: 0;
-  padding-top: 0;
-  border-top: none;
-}
-
-.section-title {
-  text-align: left;
-}
+/* ---------- wellness ---------- */
 
 .wellness-rings {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
 }
 
 .wellness-ring-card {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid rgba(128, 128, 128, 0.25);
-  border-radius: 8px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  flex: 1 1 220px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+}
+
+/* The readiness card carries a status chip the other two don't, so it gets
+   a wider basis rather than wrapping "Good · Maintaining" onto two lines. */
+.wellness-ring-hero {
+  flex: 1 1 320px;
 }
 
 .wellness-ring-card h3 {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--fs-label);
   font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .wellness-ring-copy h3 {
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
 }
 
 .score-ring {
@@ -389,7 +524,7 @@
 
 .score-ring-track {
   fill: none;
-  stroke: rgba(128, 128, 128, 0.25);
+  stroke: var(--surface-2);
 }
 
 .score-ring-value {
@@ -403,18 +538,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.5rem;
   border-radius: 999px;
+  white-space: nowrap;
 }
 
 .status-chip::before {
@@ -427,48 +567,243 @@
 
 .status-chip.status-good {
   color: var(--status-good);
-  background: color-mix(in srgb, var(--status-good) 15%, transparent);
+  background: color-mix(in srgb, var(--status-good) 16%, transparent);
 }
 
 .status-chip.status-warning {
   color: var(--status-warning);
-  background: color-mix(in srgb, var(--status-warning) 15%, transparent);
+  background: color-mix(in srgb, var(--status-warning) 16%, transparent);
 }
 
 .status-chip.status-serious {
   color: var(--status-serious);
-  background: color-mix(in srgb, var(--status-serious) 15%, transparent);
+  background: color-mix(in srgb, var(--status-serious) 16%, transparent);
 }
 
 .wellness-tiles {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 1.5rem;
+  gap: var(--space-4) var(--space-5);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--hairline);
 }
 
 .wellness-tile {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  gap: 0.35rem;
   max-width: 220px;
 }
 
 .wellness-value {
-  font-size: 1.5rem;
+  font-size: var(--fs-metric-sm);
   font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--tracking-metric);
+  font-variant-numeric: tabular-nums;
 }
 
 .wellness-label {
-  color: #888;
-  font-size: 0.875rem;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .wellness-date {
-  color: #888;
-  font-size: 0.8rem;
-  margin-top: 1rem;
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  margin-top: var(--space-3);
 }
+
+/* ---------- golf ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.round-picker {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.round-picker label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.round-picker select {
+  font: inherit;
+  font-size: var(--fs-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+
+/* The scorecard is 22 columns wide at full size. It scrolls inside its own
+   box so the page body never scrolls sideways. */
+.scorecard {
+  margin-top: var(--space-4);
+}
+
+.scorecard-scroll {
+  overflow-x: auto;
+}
+
+.scorecard table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-body);
+}
+
+.scorecard th,
+.scorecard td {
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  min-width: 2.4rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.scorecard thead th {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.scorecard tbody th {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Out/In subtotals — the last cell of each row. */
+.scorecard th:last-child,
+.scorecard td:last-child {
+  font-weight: 700;
+  background: var(--surface-1);
+}
+
+.scorecard-scores td {
+  font-weight: 600;
+}
+
+/* The conventional markers: circle under par, square over, doubled at two
+   strokes out. Shape is the encoding — each cell also carries the name in
+   .sr-only text, so this never relies on shape-and-color alone. */
+.score-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+}
+
+.marker-birdie,
+.marker-eagle {
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.marker-bogey,
+.marker-double {
+  border: 1px solid currentColor;
+}
+
+/* The doubled ring/box, drawn as an outset shadow so it needs no extra
+   element and stays centred on the digit. */
+.marker-eagle {
+  box-shadow: 0 0 0 3px var(--surface-0), 0 0 0 4px currentColor;
+}
+
+.marker-double {
+  box-shadow: 0 0 0 3px var(--surface-0), 0 0 0 4px currentColor;
+}
+
+.panel-unavailable p {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--text-secondary);
+  font-size: var(--fs-body);
+}
+
+.putting-panel {
+  margin-top: var(--space-5);
+}
+
+.putting-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+}
+
+.putting-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 140px;
+}
+
+.putting-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: var(--fs-metric-sm);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--tracking-metric);
+  font-variant-numeric: tabular-nums;
+}
+
+.putting-unit {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+.putting-label {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.putting-note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+}
+
+/* ---------- responsive ---------- */
 
 @media (max-width: 720px) {
   .app-shell {
@@ -481,11 +816,18 @@
     position: static;
     flex-direction: row;
     align-items: center;
+    gap: var(--space-2);
+    padding: 0.75rem var(--space-2);
     overflow-x: auto;
   }
 
   .brand {
     margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .brand-sub {
+    display: none;
   }
 
   .nav-group-label {
@@ -497,6 +839,18 @@
     margin-bottom: 0;
   }
 
+  .nav-link {
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px;
+  }
+
+  .nav-link.active {
+    border-left: none;
+    border-bottom-color: var(--accent);
+  }
+
   .nav-soon {
     display: none;
   }
@@ -505,10 +859,22 @@
     display: none;
   }
 
+  /* The theme toggle used to scroll off the end of this row at ~390px.
+     Pinning it out of the scrolling flow keeps it reachable at every
+     width instead of hiding behind a horizontal scroll nobody expects. */
   .sidebar-foot {
     border-top: none;
     padding-top: 0;
     margin-left: auto;
+    position: sticky;
+    right: 0;
+    flex-shrink: 0;
+    background: var(--sidebar-bg);
+    padding-left: var(--space-2);
+  }
+
+  .theme-row span {
+    display: none;
   }
 
   .sidebar-note {
@@ -516,10 +882,27 @@
   }
 
   .topbar {
-    padding: 1rem 1.25rem;
+    padding: var(--space-2) var(--space-3);
   }
 
   .content {
-    padding: 1.5rem 1.25rem;
+    padding: var(--space-3);
+  }
+
+  .summary {
+    gap: var(--space-3);
+  }
+
+  /* The desktop 190px floor forces one metric per row at 390px. Dropping it
+     puts them back on a 2-up grid, which is the denser and more scannable
+     reading at phone width; the metric type scale already shrinks via its
+     own clamp, so the values still fit. */
+  .summary-stat {
+    min-width: 0;
+    flex-basis: 130px;
+  }
+
+  .sparkline {
+    max-width: none;
   }
 }
