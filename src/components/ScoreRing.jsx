@@ -9,7 +9,7 @@ function ScoreRing({ score, max = 100, colorVar, size = 84, strokeWidth = 9, tes
   const center = size / 2;
   const radius = center - strokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
-  const filled = (Math.min(Math.max(score, 0), max) / max) * circumference;
+  const filled = score === null ? 0 : (Math.min(Math.max(score, 0), max) / max) * circumference;
 
   return (
     <div className="score-ring" style={{ width: size, height: size }}>
@@ -26,14 +26,17 @@ function ScoreRing({ score, max = 100, colorVar, size = 84, strokeWidth = 9, tes
         />
       </svg>
       <span className="score-ring-number" data-testid={testId}>
-        {score}
+        {score === null ? '—' : score}
       </span>
     </div>
   );
 }
 
 ScoreRing.propTypes = {
-  score: PropTypes.number.isRequired,
+  // null means the metric isn't computed yet for the day (e.g. a
+  // partial-day Garmin sync) — rendered as an empty ring with a dash,
+  // not treated as a zero score.
+  score: PropTypes.number,
   max: PropTypes.number,
   colorVar: PropTypes.string.isRequired,
   size: PropTypes.number,

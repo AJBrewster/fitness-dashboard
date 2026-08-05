@@ -580,6 +580,11 @@
   background: color-mix(in srgb, var(--status-serious) 16%, transparent);
 }
 
+.status-chip.status-unknown {
+  color: var(--text-secondary);
+  background: color-mix(in srgb, var(--text-secondary) 16%, transparent);
+}
+
 .wellness-tiles {
   display: flex;
   flex-wrap: wrap;
