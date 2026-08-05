@@ -2,8 +2,10 @@ import PropTypes from 'prop-types';
 import ScoreRing from './ScoreRing';
 
 // Training status labels are Garmin enums like "PRODUCTIVE_6" / "RECOVERY_2" —
-// strip the trailing tier number and title-case the rest for display.
+// strip the trailing tier number and title-case the rest for display. null
+// means Garmin hasn't computed a status yet (a partial-day sync).
 function humanizeStatus(status) {
+  if (status === null) return null;
   const words = status.replace(/_\d+$/, '').split('_');
   return words.map((w) => w[0] + w.slice(1).toLowerCase()).join(' ');
 }
@@ -12,8 +14,10 @@ function humanizeStatus(status) {
 // as text too, never color alone (see dataviz skill: status colors ship
 // with an icon/label, not color-alone). Thresholds differ per metric, so
 // each ring passes its own; the good/moderate/low banding logic itself is
-// shared.
+// shared. A null score (not computed yet, e.g. today's partial sync) is its
+// own band rather than falling into "Low" — it isn't known to be low.
 function scoreBand(score, thresholds) {
+  if (score === null) return { label: 'No data', className: 'status-unknown' };
   if (score >= thresholds.good) return { label: 'Good', className: 'status-good' };
   if (score >= thresholds.moderate) return { label: 'Moderate', className: 'status-warning' };
   return { label: 'Low', className: 'status-serious' };
@@ -31,6 +35,7 @@ const COLOR_VAR_BY_STATUS_CLASS = {
   'status-good': 'var(--status-good)',
   'status-warning': 'var(--status-warning)',
   'status-serious': 'var(--status-serious)',
+  'status-unknown': 'var(--text-secondary)',
 };
 
 function WellnessSummary({ latest }) {
@@ -61,7 +66,8 @@ function WellnessSummary({ latest }) {
           />
           <div className="wellness-ring-copy">
             <span className={`status-chip ${readinessBand.className}`} data-testid="readiness-status-chip">
-              {readinessBand.label} · {humanizeStatus(trainingStatus)}
+              {readinessBand.label}
+              {trainingStatus !== null && ` · ${humanizeStatus(trainingStatus)}`}
             </span>
             <h3>Training readiness</h3>
           </div>
@@ -89,13 +95,13 @@ function WellnessSummary({ latest }) {
       <div className="wellness-tiles">
         <div className="wellness-tile">
           <span className="wellness-value" data-testid="stress-level">
-            {avgStressLevel}
+            {avgStressLevel === null ? '—' : avgStressLevel}
           </span>
           <span className="wellness-label">Avg Stress</span>
         </div>
         <div className="wellness-tile">
           <span className="wellness-value" data-testid="resting-hr">
-            {restingHeartRateBpm}
+            {restingHeartRateBpm === null ? '—' : restingHeartRateBpm}
           </span>
           <span className="wellness-label">Resting HR (bpm)</span>
         </div>
@@ -109,12 +115,14 @@ function WellnessSummary({ latest }) {
 WellnessSummary.propTypes = {
   latest: PropTypes.shape({
     date: PropTypes.string.isRequired,
-    sleepScore: PropTypes.number.isRequired,
-    restingHeartRateBpm: PropTypes.number.isRequired,
-    avgStressLevel: PropTypes.number.isRequired,
-    bodyBatteryCharged: PropTypes.number.isRequired,
-    trainingReadinessScore: PropTypes.number.isRequired,
-    trainingStatus: PropTypes.string.isRequired,
+    // Any of these can be null — either the metric was never recorded for
+    // the day, or (for a just-synced "today") Garmin hasn't computed it yet.
+    sleepScore: PropTypes.number,
+    restingHeartRateBpm: PropTypes.number,
+    avgStressLevel: PropTypes.number,
+    bodyBatteryCharged: PropTypes.number,
+    trainingReadinessScore: PropTypes.number,
+    trainingStatus: PropTypes.string,
   }).isRequired,
 };
 

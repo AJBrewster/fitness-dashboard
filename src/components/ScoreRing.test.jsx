@@ -26,4 +26,16 @@ describe('ScoreRing', () => {
     const [filled, remainder] = valueCircle.getAttribute('stroke-dasharray').split(' ').map(Number);
     expect(filled).toBeCloseTo(remainder, 5); // filled === full circumference when clamped
   });
+
+  it('renders an empty ring and a dash for a null score instead of crashing or coercing to 0', () => {
+    const { getByTestId, container } = render(
+      <ScoreRing score={null} colorVar="var(--status-good)" testId="sleep-score" />,
+    );
+
+    expect(getByTestId('sleep-score').textContent).toBe('—');
+
+    const valueCircle = container.querySelector('.score-ring-value');
+    const [filled] = valueCircle.getAttribute('stroke-dasharray').split(' ').map(Number);
+    expect(filled).toBe(0);
+  });
 });
