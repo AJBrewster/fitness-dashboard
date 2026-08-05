@@ -81,8 +81,14 @@ function sum(values) {
 
 // Percentage rounded to one decimal, or null when there's nothing to divide
 // by — callers render null as an em dash rather than a misleading 0%.
+// `!total` (not `total === 0`) is deliberate: `total` can be `null` for an
+// imported round whose CSV never carried the denominator at all (Golf Pad's
+// export has no fairway-attempts column — see import_golfpad.py), not just
+// legitimately 0. `5 / null` is `Infinity` in JS, not a divide-by-zero
+// error, so a strict `=== 0` check alone would let a null total slip
+// through and render "Infinity%" instead of the honest "unknown".
 function percentage(count, total) {
-  if (total === 0) return null;
+  if (!total) return null;
   return Math.round((count / total) * 1000) / 10;
 }
 

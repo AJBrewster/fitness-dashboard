@@ -61,6 +61,10 @@ FIELD_ALIASES = {
     "holes_played": ["holes", "holes played", "completed holes"],
     "score": ["score", "gross score", "gross", "total score", "strokes"],
     "par": ["par", "course par", "total par"],
+    # Golf Pad's real export has no `par` column at all — only how far over
+    # par the round went. `over_par` is the fallback used to derive `par`
+    # (see parse_rounds) when a direct par column isn't present.
+    "over_par": ["gross score over par", "score to par", "to par", "over par"],
     "putts": ["putts", "total putts"],
     "gir": ["gir", "girs", "greens in regulation"],
     "fairways_hit": ["fairways", "fairways hit", "fir"],
@@ -166,12 +170,27 @@ def parse_rounds(csv_path):
                 continue
 
             holes_played = as_int(value(row, "holes_played")) or 18
+
             par = as_int(value(row, "par"))
+            if par is None:
+                # The real export carries no `par` column, only how far over
+                # par the round went — derive it rather than leaving every
+                # imported round's `par` (and therefore `toPar`) null.
+                over_par = as_int(value(row, "over_par"))
+                if over_par is not None:
+                    par = score - over_par
+
+            # Deliberately NOT guessed when absent. An earlier version of
+            # this script defaulted to 14 (18 holes) / 7 (9 holes) on the
+            # "four par-3s per 18" convention — wrong for anything that
+            # isn't a standard course. A "Kingswood Park - Executive 9"
+            # round in a real export is almost entirely par 3s, so that
+            # default would have under-counted fairway opportunities by
+            # roughly 3x and made FIR% look far worse than it is. Golf Pad's
+            # round-level export never includes attempts at all, so
+            # fairway_attempts (and therefore firPct) is null for every
+            # imported round — an honest "unknown", not a fabricated number.
             fairway_attempts = as_int(value(row, "fairway_attempts"))
-            if fairway_attempts is None:
-                # Not exported by every app version. Par 3s have no fairway,
-                # and a standard 18 has four of them — the usual convention.
-                fairway_attempts = 14 if holes_played == 18 else 7
 
             rounds.append(
                 {

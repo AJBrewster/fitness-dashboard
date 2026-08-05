@@ -27,3 +27,10 @@ src/data/golfRounds.local.json
 # scripts/sync_garmin.py. Real Garmin data, never committed.
 scripts/*.local.db
 scripts/*.log
+
+# real Golf Pad CSV exports dropped in src/data/ for scripts/import_golfpad.py
+# to read — real course names, dates, times. Never committed; the importer's
+# output (golfRounds.local.json, ignored above) is the only thing that
+# should exist past this point.
+src/data/rounds_*.csv
+src/data/*_export_*.csv

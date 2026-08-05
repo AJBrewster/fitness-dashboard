@@ -94,6 +94,16 @@ describe('getRoundSummary for a summary-only round', () => {
     expect(summary.penalties).toBe(0);
   });
 
+  it('returns null firPct — not Infinity — when the CSV never carried fairway attempts', () => {
+    // Golf Pad's real round-level export has no fairway-attempts column at
+    // all, so fairwayAttempts is `null`, not 0. `5 / null` is `Infinity` in
+    // JS, so a percentage() guard that only checks `total === 0` lets this
+    // slip through and render "Infinity%" — regression coverage for that.
+    const summary = getRoundSummary(summaryRound({}, { fairwayAttempts: null }));
+    expect(summary.firPct).toBeNull();
+    expect(summary.firPct).not.toBe(Infinity);
+  });
+
   it('returns the same field set as a hole-by-hole round', () => {
     // The two shapes must be interchangeable to callers — GolfSummary.jsx
     // reads one object either way.
