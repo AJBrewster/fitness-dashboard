@@ -228,6 +228,73 @@ export function getScoringTrend(rounds) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// ----- Momentum: how a round's good and bad holes cluster together -----
+//
+// Three run-of-play stats, all read off the same hole-by-hole rows, each
+// stated precisely because each is a judgement call:
+//
+// - BOUNCE-BACK RATE: of the bogey-or-worse holes that have a following hole
+//   in the SAME round, how often the very next hole was birdie-or-better.
+//   This is computed per round, never over the flattened hole list: the last
+//   hole of one round and the first hole of the next are not consecutive, and
+//   flattening would invent bounce-back opportunities across a round boundary
+//   that never existed. Each round's final hole is also excluded from the
+//   denominator — there is no next hole to recover on.
+// - BIRDIE CONVERSION RATE: of the greens hit in regulation, how often the
+//   hole finished birdie-or-better. This is the standard "birdie-or-better
+//   conversion" definition (GIR holes are the denominator) and the natural
+//   complement to scrambling — scrambling recovers when the green is missed,
+//   conversion capitalises when it's hit. A birdie made from off the green
+//   (a chip-in on a non-GIR hole) is deliberately not counted: it wasn't a
+//   converted green.
+// - BLOW-UP RATE: how often a hole ran to double bogey or worse, over every
+//   hole played. getHoleResult already folds everything two-or-more over par
+//   into `double`, so this just surfaces that bucket as its own rate.
+//
+// All three return null (not 0) on an empty denominator, like the rest of
+// this module, so the UI renders an em dash rather than a misleading 0%.
+
+function isBirdieOrBetter(hole) {
+  const result = getHoleResult(hole.score, hole.par);
+  return result === 'birdie' || result === 'eagle';
+}
+
+function isBogeyOrWorse(hole) {
+  const result = getHoleResult(hole.score, hole.par);
+  return result === 'bogey' || result === 'double';
+}
+
+export function getBounceBackRate(rounds) {
+  let opportunities = 0;
+  let bounceBacks = 0;
+
+  for (const round of rounds) {
+    if (!hasHoleData(round)) continue;
+    const { holes } = round;
+    // Stop before the last hole: it has no next hole in this round to bounce
+    // back on, and the next round's holes belong to a different round.
+    for (let i = 0; i < holes.length - 1; i += 1) {
+      if (!isBogeyOrWorse(holes[i])) continue;
+      opportunities += 1;
+      if (isBirdieOrBetter(holes[i + 1])) bounceBacks += 1;
+    }
+  }
+
+  return percentage(bounceBacks, opportunities);
+}
+
+export function getBirdieConversionRate(rounds) {
+  const girHoles = allHoles(rounds).filter((hole) => hole.gir);
+  const converted = girHoles.filter(isBirdieOrBetter);
+  return percentage(converted.length, girHoles.length);
+}
+
+export function getBlowUpRate(rounds) {
+  const holes = allHoles(rounds);
+  const blowUps = holes.filter((hole) => getHoleResult(hole.score, hole.par) === 'double');
+  return percentage(blowUps.length, holes.length);
+}
+
 // Per-hole averages for a single course. Grouping by course is the whole
 // point: averaging "hole 7" across two different courses describes nothing.
 export function getHoleAverages(rounds, course) {

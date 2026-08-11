@@ -8,7 +8,9 @@ activity, date filtering, plus daily
 wellness (sleep, heart rate, stress, body battery, training readiness/status),
 each shown in trend context with a sparkline and day-over-day delta, plus
 longer-range trends (VO2 max, weight) — with a golf section that dissects
-hand-entered rounds hole by hole. Built as a testing-first portfolio project.
+hand-entered rounds hole by hole, including run-of-play momentum stats
+(bounce-back, birdie conversion, blow-up rate). Built as a testing-first
+portfolio project.
 
 > 🚧 **In progress.** See [PLAN.md](PLAN.md) for milestones and current status.
 
@@ -48,28 +50,29 @@ degradation path is covered by tests.
 
 ## Testing approach
 
-- **Unit tests (Vitest, 99 tests)** — 90 cover pure calculation logic,
+- **Unit tests (Vitest, 110 tests)** — 101 cover pure calculation logic,
   deliberately separated from React components so the math is testable
   without rendering anything: 49 over `src/lib/stats.js` (totals, weekly
   rollups, filters, streak, activity-type breakdown, average HR by type,
   current-week bounds, wellness trend series + day-over-day delta, edge
-  cases) and 41 over
+  cases) and 52 over
   `src/lib/golf.js` (round summaries, score distribution, scoring by par,
-  putting, scoring trend, per-hole averages, nine splits, and the
-  mixed-fidelity rules for rounds that carry totals but no holes). 9 more use
+  putting, scoring trend, per-hole averages, nine splits, momentum stats —
+  bounce-back / birdie conversion / blow-up — and the mixed-fidelity rules
+  for rounds that carry totals but no holes). 9 more use
   `@testing-library/react` on the two components with real logic worth
   isolating — the wellness ring gauge's arc math, and the scorecard's
   score-to-marker mapping.
-- **E2E tests (Playwright, 27 tests)** cover the UI, tagged in two layers:
+- **E2E tests (Playwright, 28 tests)** cover the UI, tagged in two layers:
   `@smoke` (11 tests — loads, sidebar view switching, summary renders, weekly
   chart, activity-type breakdown, average HR by activity, wellness summary,
   trend charts, disabled "Reports" nav placeholder, golf view renders, date
-  filter scoped to the view it affects) runs on every push; the full set adds 16 more covering the
+  filter scoped to the view it affects) runs on every push; the full set adds 17 more covering the
   date-range filter (basic filter + clear, a no-match range, a
   partial/one-sided range, a single-day range, and the Lifetime/This week
   presets) and the golf view (scorecard, round switching, the eagle marker,
-  the aggregate charts, the round window, and the reduced view a round-level
-  import produces), and runs on demand. Same smoke/regression layering used
+  the aggregate charts, the momentum panel, the round window, and the reduced
+  view a round-level import produces), and runs on demand. Same smoke/regression layering used
   in production test suites.
 - **CI (GitHub Actions)** runs lint, unit tests, the build, and the
   Playwright `@smoke` set on every push (`.github/workflows/ci.yml`),

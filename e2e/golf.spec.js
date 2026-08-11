@@ -31,6 +31,10 @@ test('the KPI row reports the most recent round, even when it has no hole data',
   // ...but scrambling needs per-hole GIR flags, so it reads as unknown
   // rather than as a zero the round never earned.
   await expect(page.getByTestId('golf-scrambling')).toHaveText('—');
+  // Score is promoted to the view's hero KPI (full-width, oversized numeral);
+  // the other three stay standard tiles.
+  await expect(page.locator('.summary-stat--hero').getByTestId('golf-score')).toBeVisible();
+  await expect(page.locator('.summary-stat--hero')).toHaveCount(1);
 });
 
 test('a summary-only round replaces the scorecard with an explanation', async ({ page }) => {
@@ -105,6 +109,20 @@ test('the per-hole aggregates ignore the summary-only round entirely', async ({ 
   await expect(page.getByTestId('putts-per-round')).toHaveText('38.2');
   await expect(page.getByTestId('putts-per-gir')).toHaveText('2.22');
   await expect(page.getByTestId('three-putt-rate')).toHaveText('20.6');
+});
+
+test('the momentum panel reports bounce-back, birdie conversion, and blow-up rates', async ({ page }) => {
+  await goToGolf(page);
+  // Aggregated over the six hand-entered rounds in the default (all) window;
+  // the summary-only round contributes no holes. Values match golfRounds.json:
+  // bounce-backs 2/64, birdie conversions (on GIR) 3/32, blow-ups 17/99.
+  // The window can't be narrowed to summary-only-only rounds through the
+  // picker (the summary round is the most recent and every window keeps some
+  // hole-bearing rounds), so the panel's stand-down path is covered by the
+  // null-returning unit tests rather than here.
+  await expect(page.getByTestId('bounce-back-rate')).toHaveText('3.1');
+  await expect(page.getByTestId('birdie-conversion-rate')).toHaveText('9.4');
+  await expect(page.getByTestId('blow-up-rate')).toHaveText('17.2');
 });
 
 test('narrowing the round window drops the oldest rounds from the aggregates', async ({ page }) => {

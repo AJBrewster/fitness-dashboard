@@ -306,6 +306,25 @@
   margin-bottom: 0.4rem;
 }
 
+/* Hero KPI: the golf Score tile leads its row on a full-width basis with an
+   oversized numeral, so it reads as the view's single hero metric and the
+   rest of the row is visually subordinate — the one-hero-metric hierarchy
+   WellnessSummary already uses for Training Readiness. Presentation only;
+   the tile's markup and data-testid are unchanged. Scoped to .summary-stat
+   so it only applies where a tile is explicitly marked hero (currently golf);
+   the activity summary row is untouched. */
+.summary-stat--hero {
+  flex-basis: 100%;
+}
+
+.summary-stat--hero .summary-value {
+  font-size: clamp(3rem, 6vw, 4rem);
+}
+
+.summary-stat--hero .summary-unit {
+  font-size: 1.5rem;
+}
+
 .sparkline {
   display: block;
   width: 100%;
@@ -801,24 +820,32 @@
   font-size: var(--fs-body);
 }
 
-.putting-panel {
+/* The putting and momentum panels are the same instrument — a row of
+   labelled-percentage tiles — so they share one set of tile rules via
+   grouped selectors rather than duplicating them or having one borrow the
+   other's domain-named classes. */
+.putting-panel,
+.momentum-panel {
   margin-top: var(--space-5);
 }
 
-.putting-tiles {
+.putting-tiles,
+.momentum-tiles {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3) var(--space-4);
 }
 
-.putting-tile {
+.putting-tile,
+.momentum-tile {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   min-width: 140px;
 }
 
-.putting-value {
+.putting-value,
+.momentum-value {
   display: flex;
   align-items: baseline;
   gap: 0.2rem;
@@ -829,14 +856,16 @@
   font-variant-numeric: tabular-nums;
 }
 
-.putting-unit {
+.putting-unit,
+.momentum-unit {
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0;
   color: var(--text-secondary);
 }
 
-.putting-label {
+.putting-label,
+.momentum-label {
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: var(--tracking-label);
@@ -844,7 +873,8 @@
   color: var(--text-secondary);
 }
 
-.putting-note {
+.putting-note,
+.momentum-note {
   margin: var(--space-2) 0 0;
   font-size: var(--fs-body);
   color: var(--text-secondary);
@@ -947,6 +977,13 @@
   .summary-stat {
     min-width: 0;
     flex-basis: 130px;
+  }
+
+  /* The 2-up grid above resets every tile's basis, which would pull the hero
+     Score down into the grid too. Re-assert its full-width row so the golf
+     KPI hierarchy survives at phone width. */
+  .summary-stat--hero {
+    flex-basis: 100%;
   }
 
   .sparkline {

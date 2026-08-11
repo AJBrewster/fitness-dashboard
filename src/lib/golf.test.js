@@ -9,6 +9,9 @@ import {
   getScoringTrend,
   getHoleAverages,
   getNineSplit,
+  getBounceBackRate,
+  getBirdieConversionRate,
+  getBlowUpRate,
 } from './golf.js';
 
 // Small hand-built rounds rather than the committed fixture: each test states
@@ -352,6 +355,91 @@ describe('getScoringTrend', () => {
 
   it('returns an empty list when there are no rounds', () => {
     expect(getScoringTrend([])).toEqual([]);
+  });
+});
+
+describe('getBounceBackRate', () => {
+  it('counts a birdie-or-better immediately after a dropped shot', () => {
+    const rounds = [round([hole({ par: 4, score: 5 }), hole({ par: 4, score: 3 })])];
+    expect(getBounceBackRate(rounds)).toBe(100);
+  });
+
+  it('does not count a recovery that only reaches par', () => {
+    const rounds = [round([hole({ par: 4, score: 5 }), hole({ par: 4, score: 4 })])];
+    expect(getBounceBackRate(rounds)).toBe(0);
+  });
+
+  it('excludes a dropped shot on the final hole — there is no next hole to recover on', () => {
+    // First hole par, last hole bogey: the only bogey has no following hole,
+    // so there are zero opportunities, not a 0% success rate.
+    const rounds = [round([hole({ par: 4, score: 4 }), hole({ par: 4, score: 5 })])];
+    expect(getBounceBackRate(rounds)).toBeNull();
+  });
+
+  it('never pairs the last hole of one round with the first of the next', () => {
+    // Round one ends on a bogey; round two opens with a birdie. Flattened,
+    // that would look like a bounce-back — per round, it is not one.
+    const rounds = [
+      round([hole({ par: 4, score: 4 }), hole({ par: 4, score: 5 })], { date: '2026-07-01' }),
+      round([hole({ par: 4, score: 3 }), hole({ par: 4, score: 4 })], { date: '2026-07-02' }),
+    ];
+    expect(getBounceBackRate(rounds)).toBeNull();
+  });
+
+  it('offers no opportunity on a one-hole round and ignores summary-only rounds', () => {
+    expect(getBounceBackRate([round([hole({ par: 4, score: 5 })])])).toBeNull();
+    const mixed = [summaryRound(), round([hole({ par: 4, score: 5 }), hole({ par: 4, score: 3 })])];
+    expect(getBounceBackRate(mixed)).toBe(100);
+  });
+});
+
+describe('getBirdieConversionRate', () => {
+  it('is birdies-or-better made on greens hit in regulation, over GIR holes', () => {
+    const rounds = [
+      round([
+        hole({ par: 4, score: 3, gir: true }), // birdie on a GIR hole — converted
+        hole({ par: 4, score: 4, gir: true }), // par on a GIR hole — not converted
+        hole({ par: 4, score: 5, gir: false }), // not a GIR hole at all
+      ]),
+    ];
+    expect(getBirdieConversionRate(rounds)).toBe(50);
+  });
+
+  it('returns null when no green was hit in regulation', () => {
+    const rounds = [round([hole({ gir: false }), hole({ gir: false })])];
+    expect(getBirdieConversionRate(rounds)).toBeNull();
+  });
+
+  it('excludes a birdie made without hitting the green (a chip-in is not a converted GIR)', () => {
+    const rounds = [
+      round([
+        hole({ par: 4, score: 4, gir: true }), // GIR but only par
+        hole({ par: 4, score: 3, gir: false }), // birdie, but the green was missed
+      ]),
+    ];
+    expect(getBirdieConversionRate(rounds)).toBe(0);
+  });
+});
+
+describe('getBlowUpRate', () => {
+  it('is double-bogey-or-worse over every hole played', () => {
+    const rounds = [
+      round([
+        hole({ par: 4, score: 6 }), // +2, a blow-up
+        hole({ par: 4, score: 4 }), // par
+        hole({ par: 3, score: 6 }), // +3, folds into the same double-or-worse bucket
+      ]),
+    ];
+    expect(getBlowUpRate(rounds)).toBe(66.7);
+  });
+
+  it('ignores summary-only rounds and rates the rest', () => {
+    const rounds = [summaryRound(), round([hole({ par: 4, score: 6 }), hole({ par: 4, score: 4 })])];
+    expect(getBlowUpRate(rounds)).toBe(50);
+  });
+
+  it('returns null when the window carries no hole data', () => {
+    expect(getBlowUpRate([summaryRound()])).toBeNull();
   });
 });
 
