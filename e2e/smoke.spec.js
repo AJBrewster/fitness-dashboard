@@ -84,6 +84,12 @@ test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }
   await expect(page.getByTestId('body-battery')).toHaveText('58');
   await expect(page.getByTestId('stress-level')).toHaveText('26');
   await expect(page.getByTestId('resting-hr')).toHaveText('54');
+  // Each ring and tile carries a trend sparkline from the full wellness
+  // history (3 rings + 2 tiles = 5). Scoped to the wellness section so it
+  // doesn't also match the Activity view's summary sparklines.
+  await expect(page.locator('.wellness-summary .sparkline')).toHaveCount(5);
+  // Hero ring shows a day-over-day delta (last two readiness values: 55 → 61).
+  await expect(page.getByTestId('readiness-delta')).toHaveText('▲ 6');
 });
 
 test('trend charts render', { tag: '@smoke' }, async ({ page }) => {

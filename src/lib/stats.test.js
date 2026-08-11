@@ -8,6 +8,8 @@ import {
   filterByDateRange,
   getActivityTypeBreakdown,
   getCurrentWeekRange,
+  getWellnessSeries,
+  getWellnessDelta,
 } from './stats.js';
 
 describe('getTotals', () => {
@@ -296,5 +298,74 @@ describe('getCurrentWeekRange', () => {
       start: '2025-12-29',
       end: '2026-01-04',
     });
+  });
+});
+
+describe('getWellnessSeries', () => {
+  it('returns a field\'s values in date order', () => {
+    const wellness = [
+      { date: '2026-07-16', sleepScore: 72 },
+      { date: '2026-07-15', sleepScore: 68 },
+      { date: '2026-07-17', sleepScore: 80 },
+    ];
+    expect(getWellnessSeries(wellness, 'sleepScore')).toEqual([68, 72, 80]);
+  });
+
+  it('drops null and undefined values rather than zeroing them', () => {
+    const wellness = [
+      { date: '2026-07-15', sleepScore: 68 },
+      { date: '2026-07-16', sleepScore: null },
+      { date: '2026-07-17' },
+      { date: '2026-07-18', sleepScore: 74 },
+    ];
+    expect(getWellnessSeries(wellness, 'sleepScore')).toEqual([68, 74]);
+  });
+
+  it('returns an empty array when the field is null on every day', () => {
+    const wellness = [
+      { date: '2026-07-15', sleepScore: null },
+      { date: '2026-07-16', sleepScore: null },
+    ];
+    expect(getWellnessSeries(wellness, 'sleepScore')).toEqual([]);
+  });
+
+  it('returns an empty array for empty input', () => {
+    expect(getWellnessSeries([], 'sleepScore')).toEqual([]);
+  });
+});
+
+describe('getWellnessDelta', () => {
+  it('is the change between the latest two recorded values', () => {
+    const wellness = [
+      { date: '2026-07-15', trainingReadinessScore: 55 },
+      { date: '2026-07-16', trainingReadinessScore: 61 },
+    ];
+    expect(getWellnessDelta(wellness, 'trainingReadinessScore')).toBe(6);
+  });
+
+  it('is negative when the value dropped', () => {
+    const wellness = [
+      { date: '2026-07-15', trainingReadinessScore: 61 },
+      { date: '2026-07-16', trainingReadinessScore: 48 },
+    ];
+    expect(getWellnessDelta(wellness, 'trainingReadinessScore')).toBe(-13);
+  });
+
+  it('compares the last two recorded values, skipping nulls between them', () => {
+    const wellness = [
+      { date: '2026-07-15', trainingReadinessScore: 50 },
+      { date: '2026-07-16', trainingReadinessScore: null },
+      { date: '2026-07-17', trainingReadinessScore: 62 },
+    ];
+    expect(getWellnessDelta(wellness, 'trainingReadinessScore')).toBe(12);
+  });
+
+  it('returns null when there are fewer than two recorded values', () => {
+    const wellness = [{ date: '2026-07-15', trainingReadinessScore: 61 }];
+    expect(getWellnessDelta(wellness, 'trainingReadinessScore')).toBeNull();
+  });
+
+  it('returns null for empty input', () => {
+    expect(getWellnessDelta([], 'trainingReadinessScore')).toBeNull();
   });
 });
