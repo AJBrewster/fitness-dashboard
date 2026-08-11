@@ -31,6 +31,10 @@ test('the KPI row reports the most recent round, even when it has no hole data',
   // ...but scrambling needs per-hole GIR flags, so it reads as unknown
   // rather than as a zero the round never earned.
   await expect(page.getByTestId('golf-scrambling')).toHaveText('—');
+  // Score is promoted to the view's hero KPI (full-width, oversized numeral);
+  // the other three stay standard tiles.
+  await expect(page.locator('.summary-stat--hero').getByTestId('golf-score')).toBeVisible();
+  await expect(page.locator('.summary-stat--hero')).toHaveCount(1);
 });
 
 test('a summary-only round replaces the scorecard with an explanation', async ({ page }) => {

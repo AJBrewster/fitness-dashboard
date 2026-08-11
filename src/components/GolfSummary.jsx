@@ -25,7 +25,11 @@ function pctStat(testId, label, value) {
 
 function GolfSummary({ summary }) {
   const stats = [
-    { testId: 'golf-score', label: 'Score', value: String(summary.score), unit: formatToPar(summary.toPar) },
+    // Score is the hero metric — the one number the round is about. It leads
+    // the row with an oversized numeral so putts/GIR/scrambling read as the
+    // supporting stats they are (see .summary-stat--hero in App.css). Same
+    // one-hero-metric hierarchy WellnessSummary gives its readiness ring.
+    { testId: 'golf-score', label: 'Score', value: String(summary.score), unit: formatToPar(summary.toPar), hero: true },
     { testId: 'golf-putts', label: 'Putts', value: String(summary.putts), unit: null },
     pctStat('golf-gir', 'Greens in reg', summary.girPct),
     pctStat('golf-scrambling', 'Scrambling', summary.scramblingPct),
@@ -34,7 +38,7 @@ function GolfSummary({ summary }) {
   return (
     <section className="summary">
       {stats.map((stat) => (
-        <div className="summary-stat" key={stat.testId}>
+        <div className={`summary-stat${stat.hero ? ' summary-stat--hero' : ''}`} key={stat.testId}>
           <div className="summary-stat-top">
             <span className="summary-label">{stat.label}</span>
           </div>
