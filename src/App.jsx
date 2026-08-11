@@ -16,6 +16,8 @@ import {
   filterByDateRange,
   getActivityTypeBreakdown,
   getCurrentWeekRange,
+  getWellnessSeries,
+  getWellnessDelta,
 } from './lib/stats';
 import Summary from './components/Summary';
 import WeeklyDistanceChart from './components/WeeklyDistanceChart';
@@ -103,6 +105,21 @@ function App() {
   const typeBreakdown = getActivityTypeBreakdown(filteredActivities);
   const currentView = VIEWS.find((view) => view.id === activeView);
 
+  // Wellness view data. The last record drives the rings/tiles as before;
+  // the per-field series feed the sparklines and the readiness delta shows
+  // the day-over-day change. Computed here (not inside WellnessSummary) so
+  // the component stays presentational like Summary/DateRangeFilter — it
+  // takes plain props and calls no lib/ function itself.
+  const latestWellness = wellness[wellness.length - 1];
+  const wellnessSeries = {
+    trainingReadinessScore: getWellnessSeries(wellness, 'trainingReadinessScore'),
+    sleepScore: getWellnessSeries(wellness, 'sleepScore'),
+    bodyBatteryCharged: getWellnessSeries(wellness, 'bodyBatteryCharged'),
+    avgStressLevel: getWellnessSeries(wellness, 'avgStressLevel'),
+    restingHeartRateBpm: getWellnessSeries(wellness, 'restingHeartRateBpm'),
+  };
+  const readinessDelta = getWellnessDelta(wellness, 'trainingReadinessScore');
+
   // Falls back to the most recent round if the selected date somehow isn't in
   // the list — the picker can't produce that, but a swapped-in .local.json can.
   const selectedRound =
@@ -156,7 +173,11 @@ function App() {
           {activeView === 'view-wellness' && (
             <section id="view-wellness" className="page-section">
               <h2 className="section-title">Today&apos;s Wellness</h2>
-              <WellnessSummary wellness={wellness} />
+              <WellnessSummary
+                latest={latestWellness}
+                series={wellnessSeries}
+                readinessDelta={readinessDelta}
+              />
             </section>
           )}
 
