@@ -70,6 +70,15 @@ test('activity type breakdown renders one donut slice and one legend row per typ
   await expect(page.getByTestId('activity-type-row')).toHaveCount(7);
 });
 
+test('average HR by activity chart renders one bar per HR-bearing type', { tag: '@smoke' }, async ({ page }) => {
+  await page.goto('/');
+  // 6 of the fixture's 7 activity types record HR; strength_training never
+  // does, so it's omitted (no average to draw) — hence 6 bars, not 7.
+  // Scoped to .chart-hr-by-type: the golf view has bar charts on the same
+  // .recharts-bar-rectangle class, so an unscoped selector would over-match.
+  await expect(page.locator('.chart-hr-by-type .recharts-bar-rectangle')).toHaveCount(6);
+});
+
 test('wellness summary renders real numbers', { tag: '@smoke' }, async ({ page }) => {
   await goToView(page, "Today's Wellness");
   await expect(page.getByTestId('training-readiness')).toHaveText('61');
