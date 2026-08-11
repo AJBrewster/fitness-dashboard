@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import ScoreRing from './ScoreRing';
 import Sparkline from './Sparkline';
-import { getWellnessSeries, getWellnessDelta } from '../lib/stats';
 
 // Training status labels are Garmin enums like "PRODUCTIVE_6" / "RECOVERY_2" —
 // strip the trailing tier number and title-case the rest for display. null
@@ -61,8 +60,7 @@ DeltaBadge.propTypes = {
   delta: PropTypes.number,
 };
 
-function WellnessSummary({ wellness }) {
-  const latest = wellness[wellness.length - 1];
+function WellnessSummary({ latest, series, readinessDelta }) {
   const {
     date,
     sleepScore,
@@ -95,10 +93,10 @@ function WellnessSummary({ wellness }) {
                 {trainingStatus !== null && ` · ${humanizeStatus(trainingStatus)}`}
               </span>
               <h3>Training readiness</h3>
-              <DeltaBadge delta={getWellnessDelta(wellness, 'trainingReadinessScore')} />
+              <DeltaBadge delta={readinessDelta} />
             </div>
           </div>
-          <Sparkline values={getWellnessSeries(wellness, 'trainingReadinessScore')} />
+          <Sparkline values={series.trainingReadinessScore} />
         </div>
 
         <div className="wellness-ring-card">
@@ -110,7 +108,7 @@ function WellnessSummary({ wellness }) {
             />
             <h3>Sleep score</h3>
           </div>
-          <Sparkline values={getWellnessSeries(wellness, 'sleepScore')} />
+          <Sparkline values={series.sleepScore} />
         </div>
 
         <div className="wellness-ring-card">
@@ -122,7 +120,7 @@ function WellnessSummary({ wellness }) {
             />
             <h3>Body battery</h3>
           </div>
-          <Sparkline values={getWellnessSeries(wellness, 'bodyBatteryCharged')} />
+          <Sparkline values={series.bodyBatteryCharged} />
         </div>
       </div>
 
@@ -132,14 +130,14 @@ function WellnessSummary({ wellness }) {
             {avgStressLevel === null ? '—' : avgStressLevel}
           </span>
           <span className="wellness-label">Avg Stress</span>
-          <Sparkline values={getWellnessSeries(wellness, 'avgStressLevel')} />
+          <Sparkline values={series.avgStressLevel} />
         </div>
         <div className="wellness-tile">
           <span className="wellness-value" data-testid="resting-hr">
             {restingHeartRateBpm === null ? '—' : restingHeartRateBpm}
           </span>
           <span className="wellness-label">Resting HR (bpm)</span>
-          <Sparkline values={getWellnessSeries(wellness, 'restingHeartRateBpm')} />
+          <Sparkline values={series.restingHeartRateBpm} />
         </div>
       </div>
 
@@ -149,22 +147,24 @@ function WellnessSummary({ wellness }) {
 }
 
 WellnessSummary.propTypes = {
-  // The full day-by-day history, not just the latest record: the last entry
-  // drives the rings/tiles as before, and the whole series feeds the
-  // sparklines and the day-over-day delta. Ordered oldest-to-newest.
-  wellness: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      // Any of these can be null — either the metric was never recorded for
-      // the day, or (for a just-synced "today") Garmin hasn't computed it yet.
-      sleepScore: PropTypes.number,
-      restingHeartRateBpm: PropTypes.number,
-      avgStressLevel: PropTypes.number,
-      bodyBatteryCharged: PropTypes.number,
-      trainingReadinessScore: PropTypes.number,
-      trainingStatus: PropTypes.string,
-    })
-  ).isRequired,
+  // The most recent day's record — drives the ring/tile values.
+  latest: PropTypes.shape({
+    date: PropTypes.string.isRequired,
+    // Any of these can be null — either the metric was never recorded for
+    // the day, or (for a just-synced "today") Garmin hasn't computed it yet.
+    sleepScore: PropTypes.number,
+    restingHeartRateBpm: PropTypes.number,
+    avgStressLevel: PropTypes.number,
+    bodyBatteryCharged: PropTypes.number,
+    trainingReadinessScore: PropTypes.number,
+    trainingStatus: PropTypes.string,
+  }).isRequired,
+  // Per-field trend series (null-filtered, date-ascending), keyed by the same
+  // field names as `latest`. App.jsx builds these via getWellnessSeries.
+  series: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
+  // Day-over-day change in training readiness; null when there aren't two
+  // recorded days to compare.
+  readinessDelta: PropTypes.number,
 };
 
 export default WellnessSummary;
