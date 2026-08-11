@@ -483,13 +483,28 @@
 
 .wellness-ring-card {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   flex: 1 1 220px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   border-radius: 10px;
+}
+
+/* The ring and its label sit side by side; the sparkline drops full-width
+   beneath them (the card itself is now a column). */
+.wellness-ring-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The card's sparkline spans its full width rather than the 160px cap used
+   for the inline tile sparklines. */
+.wellness-ring-card .sparkline {
+  max-width: none;
+  margin-top: 0;
 }
 
 /* The readiness card carries a status chip the other two don't, so it gets
@@ -585,6 +600,26 @@
   background: color-mix(in srgb, var(--text-secondary) 16%, transparent);
 }
 
+/* Day-over-day delta on the hero ring. The arrow carries the direction;
+   color only reinforces it (never color alone). tabular-nums so the number
+   doesn't jitter as it changes. */
+.wellness-delta {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.wellness-delta-up {
+  color: var(--status-good);
+}
+
+.wellness-delta-down {
+  color: var(--text-secondary);
+}
+
 .wellness-tiles {
   display: flex;
   flex-wrap: wrap;
@@ -599,6 +634,13 @@
   flex-direction: column-reverse;
   gap: 0.35rem;
   max-width: 220px;
+}
+
+/* The tile is column-reverse (label above value). order:-1 sorts the
+   sparkline to the main-start (visual bottom), so it reads label / value /
+   trend top-to-bottom rather than landing above the label. */
+.wellness-tile .sparkline {
+  order: -1;
 }
 
 .wellness-value {

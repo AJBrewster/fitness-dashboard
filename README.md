@@ -4,8 +4,9 @@
 
 A dashboard for Garmin activity and wellness data — activity summary stats,
 weekly distance trends, activity-type breakdown, date filtering, plus daily
-wellness (sleep, heart rate, stress, body battery, training readiness/status)
-and longer-range trends (VO2 max, weight) — with a golf section that dissects
+wellness (sleep, heart rate, stress, body battery, training readiness/status),
+each shown in trend context with a sparkline and day-over-day delta, plus
+longer-range trends (VO2 max, weight) — with a golf section that dissects
 hand-entered rounds hole by hole. Built as a testing-first portfolio project.
 
 > 🚧 **In progress.** See [PLAN.md](PLAN.md) for milestones and current status.
@@ -46,16 +47,17 @@ degradation path is covered by tests.
 
 ## Testing approach
 
-- **Unit tests (Vitest, 83 tests)** — 75 cover pure calculation logic,
+- **Unit tests (Vitest, 94 tests)** — 85 cover pure calculation logic,
   deliberately separated from React components so the math is testable
-  without rendering anything: 35 over `src/lib/stats.js` (totals, weekly
+  without rendering anything: 44 over `src/lib/stats.js` (totals, weekly
   rollups, filters, streak, activity-type breakdown, current-week bounds,
-  edge cases) and 40 over `src/lib/golf.js` (round summaries, score
-  distribution, scoring by par, putting, scoring trend, per-hole averages,
-  nine splits, and the mixed-fidelity rules for rounds that carry totals but
-  no holes). 8 more use `@testing-library/react` on the two components with
-  real logic worth isolating — the wellness ring gauge's arc math, and the
-  scorecard's score-to-marker mapping.
+  wellness trend series + day-over-day delta, edge cases) and 41 over
+  `src/lib/golf.js` (round summaries, score distribution, scoring by par,
+  putting, scoring trend, per-hole averages, nine splits, and the
+  mixed-fidelity rules for rounds that carry totals but no holes). 9 more use
+  `@testing-library/react` on the two components with real logic worth
+  isolating — the wellness ring gauge's arc math, and the scorecard's
+  score-to-marker mapping.
 - **E2E tests (Playwright, 26 tests)** cover the UI, tagged in two layers:
   `@smoke` (10 tests — loads, sidebar view switching, summary renders, weekly
   chart, activity-type breakdown, wellness summary, trend charts, disabled

@@ -132,3 +132,27 @@ export function getCurrentWeekRange(referenceDate = new Date()) {
 
   return { start: getDateKey(monday), end: getDateKey(sunday) };
 }
+
+// Date-ascending list of a wellness field's recorded values, feeding a
+// Sparkline (which wants a bare number[]). Nulls are dropped rather than
+// zeroed: a day Garmin hasn't finished computing shouldn't punch a false
+// trough into the trend line. Sorting by date makes the line read left to
+// right regardless of the order the records sit in the source array.
+export function getWellnessSeries(wellness, field) {
+  return [...wellness]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((record) => record[field])
+    .filter((value) => value !== null && value !== undefined);
+}
+
+// Change between a field's latest two recorded values (positive = up).
+// null — not 0 — when there aren't two values to compare, so the UI can
+// render an em dash rather than a delta of "0" that implies "no change"
+// when the truth is "not enough data". Same null-not-zero convention as
+// golf.js. Compares across nulls: it's the last two *recorded* values,
+// not the last two calendar days.
+export function getWellnessDelta(wellness, field) {
+  const series = getWellnessSeries(wellness, field);
+  if (series.length < 2) return null;
+  return series[series.length - 1] - series[series.length - 2];
+}

@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import ScoreRing from './ScoreRing';
+import Sparkline from './Sparkline';
+import { getWellnessSeries, getWellnessDelta } from '../lib/stats';
 
 // Training status labels are Garmin enums like "PRODUCTIVE_6" / "RECOVERY_2" —
 // strip the trailing tier number and title-case the rest for display. null
@@ -38,7 +40,29 @@ const COLOR_VAR_BY_STATUS_CLASS = {
   'status-unknown': 'var(--text-secondary)',
 };
 
-function WellnessSummary({ latest }) {
+// Day-over-day change on the hero ring. The arrow glyph carries the
+// direction (not color alone), and the class only tints it. null means
+// there weren't two recorded days to compare — render nothing rather than
+// a "0" that would read as "no change".
+function DeltaBadge({ delta }) {
+  if (delta === null || delta === 0) return null;
+  const up = delta > 0;
+  return (
+    <span
+      className={`wellness-delta ${up ? 'wellness-delta-up' : 'wellness-delta-down'}`}
+      data-testid="readiness-delta"
+    >
+      {up ? '▲' : '▼'} {Math.abs(delta)}
+    </span>
+  );
+}
+
+DeltaBadge.propTypes = {
+  delta: PropTypes.number,
+};
+
+function WellnessSummary({ wellness }) {
+  const latest = wellness[wellness.length - 1];
   const {
     date,
     sleepScore,
@@ -57,38 +81,48 @@ function WellnessSummary({ latest }) {
     <section className="wellness-summary">
       <div className="wellness-rings">
         <div className="wellness-ring-card wellness-ring-hero">
-          <ScoreRing
-            score={trainingReadinessScore}
-            colorVar={COLOR_VAR_BY_STATUS_CLASS[readinessBand.className]}
-            size={104}
-            strokeWidth={10}
-            testId="training-readiness"
-          />
-          <div className="wellness-ring-copy">
-            <span className={`status-chip ${readinessBand.className}`} data-testid="readiness-status-chip">
-              {readinessBand.label}
-              {trainingStatus !== null && ` · ${humanizeStatus(trainingStatus)}`}
-            </span>
-            <h3>Training readiness</h3>
+          <div className="wellness-ring-main">
+            <ScoreRing
+              score={trainingReadinessScore}
+              colorVar={COLOR_VAR_BY_STATUS_CLASS[readinessBand.className]}
+              size={104}
+              strokeWidth={10}
+              testId="training-readiness"
+            />
+            <div className="wellness-ring-copy">
+              <span className={`status-chip ${readinessBand.className}`} data-testid="readiness-status-chip">
+                {readinessBand.label}
+                {trainingStatus !== null && ` · ${humanizeStatus(trainingStatus)}`}
+              </span>
+              <h3>Training readiness</h3>
+              <DeltaBadge delta={getWellnessDelta(wellness, 'trainingReadinessScore')} />
+            </div>
           </div>
+          <Sparkline values={getWellnessSeries(wellness, 'trainingReadinessScore')} />
         </div>
 
         <div className="wellness-ring-card">
-          <ScoreRing
-            score={sleepScore}
-            colorVar={COLOR_VAR_BY_STATUS_CLASS[sleepBand.className]}
-            testId="sleep-score"
-          />
-          <h3>Sleep score</h3>
+          <div className="wellness-ring-main">
+            <ScoreRing
+              score={sleepScore}
+              colorVar={COLOR_VAR_BY_STATUS_CLASS[sleepBand.className]}
+              testId="sleep-score"
+            />
+            <h3>Sleep score</h3>
+          </div>
+          <Sparkline values={getWellnessSeries(wellness, 'sleepScore')} />
         </div>
 
         <div className="wellness-ring-card">
-          <ScoreRing
-            score={bodyBatteryCharged}
-            colorVar={COLOR_VAR_BY_STATUS_CLASS[batteryBand.className]}
-            testId="body-battery"
-          />
-          <h3>Body battery</h3>
+          <div className="wellness-ring-main">
+            <ScoreRing
+              score={bodyBatteryCharged}
+              colorVar={COLOR_VAR_BY_STATUS_CLASS[batteryBand.className]}
+              testId="body-battery"
+            />
+            <h3>Body battery</h3>
+          </div>
+          <Sparkline values={getWellnessSeries(wellness, 'bodyBatteryCharged')} />
         </div>
       </div>
 
@@ -98,12 +132,14 @@ function WellnessSummary({ latest }) {
             {avgStressLevel === null ? '—' : avgStressLevel}
           </span>
           <span className="wellness-label">Avg Stress</span>
+          <Sparkline values={getWellnessSeries(wellness, 'avgStressLevel')} />
         </div>
         <div className="wellness-tile">
           <span className="wellness-value" data-testid="resting-hr">
             {restingHeartRateBpm === null ? '—' : restingHeartRateBpm}
           </span>
           <span className="wellness-label">Resting HR (bpm)</span>
+          <Sparkline values={getWellnessSeries(wellness, 'restingHeartRateBpm')} />
         </div>
       </div>
 
@@ -113,17 +149,22 @@ function WellnessSummary({ latest }) {
 }
 
 WellnessSummary.propTypes = {
-  latest: PropTypes.shape({
-    date: PropTypes.string.isRequired,
-    // Any of these can be null — either the metric was never recorded for
-    // the day, or (for a just-synced "today") Garmin hasn't computed it yet.
-    sleepScore: PropTypes.number,
-    restingHeartRateBpm: PropTypes.number,
-    avgStressLevel: PropTypes.number,
-    bodyBatteryCharged: PropTypes.number,
-    trainingReadinessScore: PropTypes.number,
-    trainingStatus: PropTypes.string,
-  }).isRequired,
+  // The full day-by-day history, not just the latest record: the last entry
+  // drives the rings/tiles as before, and the whole series feeds the
+  // sparklines and the day-over-day delta. Ordered oldest-to-newest.
+  wellness: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      // Any of these can be null — either the metric was never recorded for
+      // the day, or (for a just-synced "today") Garmin hasn't computed it yet.
+      sleepScore: PropTypes.number,
+      restingHeartRateBpm: PropTypes.number,
+      avgStressLevel: PropTypes.number,
+      bodyBatteryCharged: PropTypes.number,
+      trainingReadinessScore: PropTypes.number,
+      trainingStatus: PropTypes.string,
+    })
+  ).isRequired,
 };
 
 export default WellnessSummary;

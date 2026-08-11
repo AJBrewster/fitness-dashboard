@@ -50,6 +50,16 @@ each committable on its own — all four done, tests/lint/build green:
    scoring trend. Built directly in the new visual language so nothing got
    styled twice.
 
+**Shipped 2026-08-11: wellness in context (REVAMP_PLAN M1).** `WellnessSummary`
+now receives the full `wellness` array instead of only `latest` — each ring
+and tile carries a trend sparkline over the wellness history, and the hero
+Training Readiness ring shows a day-over-day delta badge. Pure `stats.js`
+additions (`getWellnessSeries`/`getWellnessDelta`), no fixture or schema
+change — it only surfaces the six days `App.jsx` was already loading and
+discarding. This is milestone 1 of the four in `REVAMP_PLAN.md`; M2–M4
+(avg-HR-by-type, golf momentum panel, golf KPI hero tile) remain an open
+proposal there, deliberately not auto-continued.
+
 **No Strokes Gained, deliberately.** Real SG needs every shot's starting lie
 and distance-to-hole measured against a baseline table; hole-by-hole
 scorecards cannot produce it. A number labelled "strokes gained" that wasn't

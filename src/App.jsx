@@ -101,7 +101,6 @@ function App() {
   const weeklyDuration = getWeeklyDuration(filteredActivities);
   const weeklyActivityCount = getWeeklyActivityCount(filteredActivities);
   const typeBreakdown = getActivityTypeBreakdown(filteredActivities);
-  const latestWellness = wellness[wellness.length - 1];
   const currentView = VIEWS.find((view) => view.id === activeView);
 
   // Falls back to the most recent round if the selected date somehow isn't in
@@ -157,7 +156,7 @@ function App() {
           {activeView === 'view-wellness' && (
             <section id="view-wellness" className="page-section">
               <h2 className="section-title">Today&apos;s Wellness</h2>
-              <WellnessSummary latest={latestWellness} />
+              <WellnessSummary wellness={wellness} />
             </section>
           )}
 
