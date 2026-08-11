@@ -14,7 +14,9 @@ const COLOR_BY_TYPE = {
   stand_up_paddleboarding_v2: 'var(--series-7)',
 };
 
-const LABEL_BY_TYPE = {
+// Exported so HrByTypeChart renders the same display names — one type->label
+// map, not two that could drift apart.
+export const LABEL_BY_TYPE = {
   running: 'Running',
   walking: 'Walking',
   strength_training: 'Strength Training',

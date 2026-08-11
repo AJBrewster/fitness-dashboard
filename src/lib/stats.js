@@ -103,6 +103,26 @@ export function getActivityTypeBreakdown(activities) {
   return Array.from(countsByType, ([type, count]) => ({ type, count })).sort((a, b) => b.count - a.count);
 }
 
+// Average heart rate per activity type, highest first — surfaces the
+// `avgHrBpm` field every activity already carries but nothing displayed.
+// A type whose activities never recorded HR (e.g. strength training logged
+// without a strap) is omitted, not emitted as a 0/NaN bar: there's no
+// average to show and no bar to draw. Within a type only real readings are
+// averaged — a null is excluded, never counted as zero.
+export function getAvgHrByType(activities) {
+  const hrByType = new Map();
+  for (const activity of activities) {
+    if (typeof activity.avgHrBpm !== 'number') continue;
+    if (!hrByType.has(activity.type)) hrByType.set(activity.type, []);
+    hrByType.get(activity.type).push(activity.avgHrBpm);
+  }
+
+  return Array.from(hrByType, ([type, values]) => ({
+    type,
+    avgHr: Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10,
+  })).sort((a, b) => b.avgHr - a.avgHr);
+}
+
 export function filterByDateRange(activities, start, end) {
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();

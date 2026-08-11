@@ -15,6 +15,7 @@ import {
   getWeeklyActivityCount,
   filterByDateRange,
   getActivityTypeBreakdown,
+  getAvgHrByType,
   getCurrentWeekRange,
   getWellnessSeries,
   getWellnessDelta,
@@ -23,6 +24,7 @@ import Summary from './components/Summary';
 import WeeklyDistanceChart from './components/WeeklyDistanceChart';
 import DateRangeFilter from './components/DateRangeFilter';
 import ActivityTypeBreakdown from './components/ActivityTypeBreakdown';
+import HrByTypeChart from './components/HrByTypeChart';
 import WellnessSummary from './components/WellnessSummary';
 import Vo2MaxChart from './components/Vo2MaxChart';
 import WeightChart from './components/WeightChart';
@@ -103,6 +105,7 @@ function App() {
   const weeklyDuration = getWeeklyDuration(filteredActivities);
   const weeklyActivityCount = getWeeklyActivityCount(filteredActivities);
   const typeBreakdown = getActivityTypeBreakdown(filteredActivities);
+  const avgHrByType = getAvgHrByType(filteredActivities);
   const currentView = VIEWS.find((view) => view.id === activeView);
 
   // Wellness view data. The last record drives the rings/tiles as before;
@@ -167,6 +170,7 @@ function App() {
               />
               <WeeklyDistanceChart weeklyDistance={weeklyDistance} />
               <ActivityTypeBreakdown breakdown={typeBreakdown} />
+              <HrByTypeChart avgHrByType={avgHrByType} />
             </section>
           )}
 

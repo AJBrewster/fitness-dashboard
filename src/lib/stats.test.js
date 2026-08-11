@@ -7,6 +7,7 @@ import {
   filterByType,
   filterByDateRange,
   getActivityTypeBreakdown,
+  getAvgHrByType,
   getCurrentWeekRange,
   getWellnessSeries,
   getWellnessDelta,
@@ -298,6 +299,52 @@ describe('getCurrentWeekRange', () => {
       start: '2025-12-29',
       end: '2026-01-04',
     });
+  });
+});
+
+describe('getAvgHrByType', () => {
+  it('averages avgHrBpm per type, highest first', () => {
+    const activities = [
+      { type: 'running', avgHrBpm: 150 },
+      { type: 'running', avgHrBpm: 160 },
+      { type: 'walking', avgHrBpm: 100 },
+    ];
+    expect(getAvgHrByType(activities)).toEqual([
+      { type: 'running', avgHr: 155 },
+      { type: 'walking', avgHr: 100 },
+    ]);
+  });
+
+  it('excludes null HR readings from a type\'s average rather than counting them as zero', () => {
+    const activities = [
+      { type: 'running', avgHrBpm: 150 },
+      { type: 'running', avgHrBpm: null },
+      { type: 'running', avgHrBpm: 160 },
+    ];
+    // Average of 150 and 160, not (150 + 0 + 160) / 3.
+    expect(getAvgHrByType(activities)).toEqual([{ type: 'running', avgHr: 155 }]);
+  });
+
+  it('omits a type whose activities never recorded HR', () => {
+    const activities = [
+      { type: 'running', avgHrBpm: 150 },
+      { type: 'strength_training', avgHrBpm: null },
+      { type: 'strength_training', avgHrBpm: null },
+    ];
+    expect(getAvgHrByType(activities)).toEqual([{ type: 'running', avgHr: 150 }]);
+  });
+
+  it('rounds the average to one decimal', () => {
+    const activities = [
+      { type: 'running', avgHrBpm: 141 },
+      { type: 'running', avgHrBpm: 158 },
+      { type: 'running', avgHrBpm: 165 },
+    ];
+    expect(getAvgHrByType(activities)).toEqual([{ type: 'running', avgHr: 154.7 }]);
+  });
+
+  it('returns an empty array for no activities', () => {
+    expect(getAvgHrByType([])).toEqual([]);
   });
 });
 

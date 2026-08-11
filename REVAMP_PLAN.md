@@ -39,7 +39,9 @@ No fixture schema change — this only stops discarding data `wellness.json` alr
 - Tests: `stats.test.js` — normal series, all-null field, single-day input (below `Sparkline`'s own <2-point guard), unsorted input. Update `WellnessSummary`'s existing PropTypes/tests for the new `wellness` array prop. `e2e/smoke.spec.js`: confirm existing wellness assertions still pass unchanged (values shouldn't move) and add a light presence check for the new sparklines.
 - Docs: CLAUDE.md's `WellnessSummary.jsx` entry, PLAN.md, README.md.
 
-### M2 — Avg HR by activity type (Activity view)
+### M2 — Avg HR by activity type (Activity view) — ✅ SHIPPED 2026-08-11
+Done: `getAvgHrByType` in `stats.js` (5 new unit tests), new `HrByTypeChart.jsx` (single-hue horizontal bar chart, `.chart-hr-by-type` wrapper), wired into the Activity view from `filteredActivities` so it respects the date filter, reusing the now-exported `LABEL_BY_TYPE` from `ActivityTypeBreakdown.jsx`. A type with no HR readings (strength training in the fixture) is omitted rather than shown as a zero bar → 6 bars, not 7; smoke test asserts that scoped count. Docs synced. **M3–M4 below remain an open proposal — not auto-continued.**
+
 No fixture change — closes an existing, already-collected-but-unshown gap.
 
 - `src/lib/stats.js`: `getAvgHrByType(activities)` — group by `type`, average `avgHrBpm` excluding nulls per type, return `null` (not `0`/`NaN`) for a type with zero HR-bearing activities.
