@@ -306,6 +306,25 @@
   margin-bottom: 0.4rem;
 }
 
+/* Hero KPI: the golf Score tile leads its row on a full-width basis with an
+   oversized numeral, so it reads as the view's single hero metric and the
+   rest of the row is visually subordinate — the one-hero-metric hierarchy
+   WellnessSummary already uses for Training Readiness. Presentation only;
+   the tile's markup and data-testid are unchanged. Scoped to .summary-stat
+   so it only applies where a tile is explicitly marked hero (currently golf);
+   the activity summary row is untouched. */
+.summary-stat--hero {
+  flex-basis: 100%;
+}
+
+.summary-stat--hero .summary-value {
+  font-size: clamp(3rem, 6vw, 4rem);
+}
+
+.summary-stat--hero .summary-unit {
+  font-size: 1.5rem;
+}
+
 .sparkline {
   display: block;
   width: 100%;
@@ -958,6 +977,13 @@
   .summary-stat {
     min-width: 0;
     flex-basis: 130px;
+  }
+
+  /* The 2-up grid above resets every tile's basis, which would pull the hero
+     Score down into the grid too. Re-assert its full-width row so the golf
+     KPI hierarchy survives at phone width. */
+  .summary-stat--hero {
+    flex-basis: 100%;
   }
 
   .sparkline {

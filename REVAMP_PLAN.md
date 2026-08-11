@@ -64,7 +64,10 @@ Pure math, no fixture change.
 - Tests: `golf.test.js` — bounce-back's last-hole exclusion (including the 9-hole round), a round with only one hole (→ null), a summary-only round contributing nothing; birdie-conversion with zero GIR holes (→ null); blow-up rate over a mixed window. `e2e/golf.spec.js` (untagged, matches existing golf-detail test placement): panel values against fixture, and standing down on a summary-only-only window.
 - Docs.
 
-### M4 — Golf KPI hero tile (visual hierarchy, no new math)
+### M4 — Golf KPI hero tile (visual hierarchy, no new math) — ✅ SHIPPED 2026-08-11
+Done: the golf Score tile gets a `summary-stat--hero` modifier (full-width row, oversized numeral) in `GolfSummary.jsx`, with the CSS in `App.css` (not `index.css` — the `.summary-stat` rules live there), including a `≤720px` override so the hero stays full-width on mobile. Scoped so only golf's Score tile is affected; the activity summary row is untouched. `data-testid`s unchanged; the existing golf e2e KPI test gained a `.summary-stat--hero` presence/count assertion. No new math, no fixture change. Docs synced. **This completes the four-milestone REVAMP_PLAN.**
+
+
 The one visual-hierarchy change scoped into this pass, applied where the plan is already touching Golf's KPI row rather than as a separate re-skin milestone. Handicap/Score Differential math is explicitly **out** per Alex's call — this is presentation only.
 
 - `src/components/GolfSummary.jsx`: promote the Score/to-par tile to a hero treatment (larger numeral, first position) — mirrors the pattern `WellnessSummary.jsx` already uses for its Training Readiness ring.
