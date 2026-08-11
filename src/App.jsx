@@ -7,6 +7,9 @@ import {
   getScoringByPar,
   getPuttingStats,
   getScoringTrend,
+  getBounceBackRate,
+  getBirdieConversionRate,
+  getBlowUpRate,
 } from './lib/golf';
 import {
   getTotals,
@@ -36,6 +39,7 @@ import ScoreDistributionChart from './components/ScoreDistributionChart';
 import ScoringByParChart from './components/ScoringByParChart';
 import ScoringTrendChart from './components/ScoringTrendChart';
 import PuttingPanel from './components/PuttingPanel';
+import MomentumPanel from './components/MomentumPanel';
 import PanelUnavailable, { NO_HOLE_DATA_WINDOW } from './components/PanelUnavailable';
 import './App.css';
 
@@ -215,6 +219,13 @@ function App() {
                   <ScoreDistributionChart distribution={getScoreDistribution(windowedRounds)} />
                   <ScoringByParChart scoringByPar={getScoringByPar(windowedRounds)} />
                   <PuttingPanel putting={getPuttingStats(windowedRounds)} />
+                  <MomentumPanel
+                    momentum={{
+                      bounceBackRate: getBounceBackRate(windowedRounds),
+                      birdieConversionRate: getBirdieConversionRate(windowedRounds),
+                      blowUpRate: getBlowUpRate(windowedRounds),
+                    }}
+                  />
                 </>
               ) : (
                 <PanelUnavailable title="Hole-by-hole analysis" reason={NO_HOLE_DATA_WINDOW} />

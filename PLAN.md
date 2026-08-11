@@ -63,8 +63,17 @@ discarding.
 respects the date filter) driven by `getAvgHrByType()` — surfaces the
 `avgHrBpm` field every activity already carried but nothing displayed. A
 type with no HR readings is omitted rather than shown as a zero bar. No
-fixture change. M3–M4 (golf momentum panel, golf KPI hero tile) remain an
-open proposal in `REVAMP_PLAN.md`, deliberately not auto-continued.
+fixture change.
+
+**Shipped 2026-08-11: golf momentum panel (REVAMP_PLAN M3).** New
+`MomentumPanel` on the golf view (behind the existing hole-by-hole gate)
+showing bounce-back rate, birdie conversion, and blow-up rate — three
+run-of-play stats computed from the existing hole shape with no new
+hand-entry (`getBounceBackRate`/`getBirdieConversionRate`/`getBlowUpRate` in
+`golf.js`). Bounce-back is computed per round so a round boundary is never
+mistaken for consecutive holes. No fixture change. M4 (golf KPI hero tile)
+remains an open proposal in `REVAMP_PLAN.md`, deliberately not
+auto-continued.
 
 **No Strokes Gained, deliberately.** Real SG needs every shot's starting lie
 and distance-to-hole measured against a baseline table; hole-by-hole

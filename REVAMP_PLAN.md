@@ -50,7 +50,9 @@ No fixture change — closes an existing, already-collected-but-unshown gap.
 - Tests: `stats.test.js` — mixed null/non-null HR per type, an all-null type, empty activities. `e2e/smoke.spec.js`: new scoped chart assertion pinned to fixture values.
 - Docs.
 
-### M3 — Golf Momentum panel (bounce-back / birdie conversion / blow-up rate)
+### M3 — Golf Momentum panel (bounce-back / birdie conversion / blow-up rate) — ✅ SHIPPED 2026-08-11
+Done: `getBounceBackRate`/`getBirdieConversionRate`/`getBlowUpRate` in `golf.js` (11 new unit tests), new `MomentumPanel.jsx` (shares the putting panel's tile styling via grouped CSS selectors), wired behind the existing `holeBearingRounds` gate with the same `PanelUnavailable` fallback. Bounce-back iterates per round (never over flattened holes) so a round boundary isn't read as consecutive holes; birdie conversion uses the standard GIR-denominator definition (refinement of this plan's looser wording, documented in `golf.js`). e2e asserts the three rates against the fixture (2/64, 3/32 on GIR, 17/99). Docs synced. **M4 below remains an open proposal — not auto-continued.**
+
 Pure math, no fixture change.
 
 - `src/lib/golf.js`, same header-comment discipline as the existing scrambling/no-SG notes:
